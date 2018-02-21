@@ -70,9 +70,6 @@ class MainLoop:
                 self.send_resources()
                 time.sleep(5)
 
-    def get_logs_loop(self):
-        self.send_logs()
-
     def launch_main_loop(self):
-        threading.Thread(target=self.get_logs_loop).start()
+        threading.Thread(target=self.send_logs).start()
         threading.Thread(target=self.get_resources_loop).start()
