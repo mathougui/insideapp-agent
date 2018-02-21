@@ -1,24 +1,32 @@
 import sys
+import threading
 import time
 
 import requests
+from requests.auth import HTTPBasicAuth
 
+from logs import get_logs
 from resources import Resources
 
 
-class ApiCall:
+class MainLoop:
     resources = None
     resources_to_get = {'cpu_process': True, 'cpu_global': True, 'memory_process': True, 'memory_global': True, 'swap_process': True, 'swap_global': True}
+    logs_to_get = {'nginx': '/var/log/nginx/error.log'}
+    api_key = ""
+    logs_url = "http://insideapp.com/app/4564645456/logs"
+    resources_url = "http://insideapp.com/app/4545665654/resources"
 
     def __init__(self):
         self.resources = Resources(sys.argv[2])
+        self.api_key = sys.argv[1]
 
-    @staticmethod
-    def make_request(payload):
-        requests.post("http://insideapp.com/app/4ea5oe4a64ea/resources", data=payload)
+    def make_request(self, payload, url):
+        print(payload)
+        requests.post(url, data=payload, auth=HTTPBasicAuth('', self.api_key))
 
-    def fill_payload(self):
-        payload = {'api_key': sys.argv[1]}
+    def get_all_needed_resources(self):
+        payload = {}
         with self.resources.process.oneshot():
             if self.resources_to_get['cpu_process']:
                 cpu_process = self.resources.get_process_cpu_percent()
@@ -38,12 +46,33 @@ class ApiCall:
             if self.resources_to_get['swap_global']:
                 swap_global = self.resources.get_global_swap_percent()
                 payload['swap_global'] = swap_global
-        print(payload)
         return payload
 
-    def launch_main_loop(self):
+    def get_all_needed_logs(self):
+        payload = {}
+        if self.logs_to_get['nginx']:
+            logs = get_logs(self.logs_to_get['nginx'])
+            payload['nginx'] = logs
+        return payload
+
+    def send_resources(self):
+        payload = self.get_all_needed_resources()
+        self.make_request(payload, self.resources_url)
+
+    def send_logs(self):
+        payload = self.get_all_needed_logs()
+        print(payload)
+        self.make_request(payload, self.logs_url)
+
+    def get_resources_loop(self):
         while True:
             if self.resources.process is not None:
-                payload = self.fill_payload()
-                self.make_request(payload)
-                time.sleep(1)
+                self.send_resources()
+                time.sleep(5)
+
+    def get_logs_loop(self):
+        self.send_logs()
+
+    def launch_main_loop(self):
+        threading.Thread(target=self.get_logs_loop).start()
+        threading.Thread(target=self.get_resources_loop).start()
