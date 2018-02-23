@@ -5,25 +5,38 @@ import time
 import requests
 from requests.auth import HTTPBasicAuth
 
-from logs import get_logs
+from logs import Log
 from resources import Resources
 
 
 class MainLoop:
     resources = None
-    resources_to_get = {'cpu_process': True, 'cpu_global': True, 'memory_process': True, 'memory_global': True, 'swap_process': True, 'swap_global': True}
-    logs_to_get = {'nginx': '/var/log/nginx/error.log'}
+    resources_to_get = {'cpu_process': True, 'cpu_global': True, 'memory_process': True,
+                        'memory_global': True, 'swap_process': True, 'swap_global': True}
+    logs_to_get = {'nginx': '/var/log/nginx/error.log', 'apache': '/var/log/nginx/error.log.4'}
     api_key = ""
     logs_url = "http://insideapp.com/app/4564645456/logs"
     resources_url = "http://insideapp.com/app/4545665654/resources"
+    log = None
 
     def __init__(self):
         self.resources = Resources(sys.argv[2])
         self.api_key = sys.argv[1]
+        self.log = Log(self.logs_to_get)
 
-    def make_request(self, payload, url):
-        print(payload)
-        requests.post(url, data=payload, auth=HTTPBasicAuth('', self.api_key))
+    def launch_main_loop(self):
+        self.get_resources_and_logs()
+
+    def get_resources_and_logs(self):
+        while True:
+            if self.resources.process is not None:
+                self.send_resources()
+            self.send_logs()
+            time.sleep(5)
+
+    def send_resources(self):
+        payload = self.get_all_needed_resources()
+        self.make_request(payload, self.resources_url)
 
     def get_all_needed_resources(self):
         payload = {}
@@ -48,28 +61,19 @@ class MainLoop:
                 payload['swap_global'] = swap_global
         return payload
 
-    def get_all_needed_logs(self):
-        payload = {}
-        if self.logs_to_get['nginx']:
-            logs = get_logs(self.logs_to_get['nginx'])
-            payload['nginx'] = logs
-        return payload
-
-    def send_resources(self):
-        payload = self.get_all_needed_resources()
-        self.make_request(payload, self.resources_url)
-
     def send_logs(self):
         payload = self.get_all_needed_logs()
-        print(payload)
         self.make_request(payload, self.logs_url)
 
-    def get_resources_loop(self):
-        while True:
-            if self.resources.process is not None:
-                self.send_resources()
-                time.sleep(5)
+    def get_all_needed_logs(self):
+        payload = {}
+        for log in self.logs_to_get:
+            logs = self.log.get_logs(log)
+            if logs:
+                payload[log] = logs
+        return payload
 
-    def launch_main_loop(self):
-        threading.Thread(target=self.send_logs).start()
-        threading.Thread(target=self.get_resources_loop).start()
+    def make_request(self, payload, url):
+        if payload:
+            requests.post(url, data=payload,
+                          auth=HTTPBasicAuth('', self.api_key))
