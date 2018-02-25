@@ -8,17 +8,19 @@ from requests.auth import HTTPBasicAuth
 from logs import Log
 from resources import Resources
 
+import psutil
+
 
 class MainLoop:
     resources = None
     resources_to_get = {'cpu_process': True, 'cpu_global': True, 'memory_process': True,
                         'memory_global': True, 'swap_process': True, 'swap_global': True}
     resources_functions = None
-    logs_to_get = {'nginx': '/var/log/nginx/error.log'}
-    api_key = ""
-    logs_url = "http://insideapp.com/app/4564645456/logs"
-    resources_url = "http://insideapp.com/app/4545665654/resources"
-    log = None
+    logs_to_get         = {}
+    api_key             = ""
+    logs_url            = ""
+    resources_url       = ""
+    log                 = None
 
     def __init__(self):
         self.resources = Resources(sys.argv[2])
@@ -43,10 +45,13 @@ class MainLoop:
 
     def get_all_needed_resources(self):
         payload = {}
-        with self.resources.process.oneshot():
-            for p in self.resources_to_get:
-                resource = self.resources_functions[p]()
-                payload[p] = resource
+        try:
+            with self.resources.process.oneshot():
+                for p in self.resources_to_get:
+                    resource = self.resources_functions[p]()
+                    payload[p] = resource
+        except psutil.NoSuchProcess:
+            print('Could not find process "' + self.resources.process_name + '"')
         return payload
 
     def send_logs(self):
@@ -63,6 +68,5 @@ class MainLoop:
 
     def make_request(self, payload, url):
         if payload:
-            print(payload)
-            # requests.post(url, data=payload,
-            #              auth=HTTPBasicAuth('', self.api_key))
+            pass
+            # TODO Make Post request to API with basic auth

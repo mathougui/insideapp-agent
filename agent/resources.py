@@ -1,9 +1,12 @@
 import psutil
 
-
 class Resources:
     process_name = ""
     process = None
+
+    def __init__(self, process_name):
+        self.process_name = process_name
+        self.search_for_process()
 
     def search_for_process(self):
         list_processes = []
@@ -12,10 +15,10 @@ class Resources:
                 list_processes.append(p)
         if len(list_processes) > 0:
             self.process = list_processes[0]
+        else:
+            print('Could not find process "' + self.process_name + '"')
+            exit(1)
 
-    def __init__(self, process_name):
-        self.process_name = process_name
-        self.search_for_process()
 
     def get_process_cpu_percent(self):
         return self.process.cpu_percent()
