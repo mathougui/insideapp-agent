@@ -1,5 +1,6 @@
 import psutil
 
+
 class Resources:
     process_name = ""
     process = None
@@ -18,7 +19,6 @@ class Resources:
         else:
             print('Could not find process "' + self.process_name + '"')
             exit(1)
-
 
     def get_process_cpu_percent(self):
         return self.process.cpu_percent()

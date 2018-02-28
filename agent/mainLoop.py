@@ -1,14 +1,13 @@
+import json
 import sys
-import threading
 import time
 
+import psutil
 import requests
 from requests.auth import HTTPBasicAuth
 
 from logs import Log
 from resources import Resources
-import json
-import psutil
 
 
 class MainLoop:
@@ -26,8 +25,10 @@ class MainLoop:
         self.resources = Resources(sys.argv[2])
         self.api_key = sys.argv[1]
         self.log = Log(self.logs_to_get)
-        self.resources_functions = {"CPU_app": self.resources.get_process_cpu_percent, "CPU_glob": self.resources.get_global_cpu_percent, "RAM_app": self.resources.get_process_memory_percent,
-                                    "RAM_glob": self.resources.get_global_memory_percent, "SWAP_app": self.resources.get_process_swap_percent, "SWAP_glob": self.resources.get_global_swap_percent}
+        self.resources_functions = {"CPU_app": self.resources.get_process_cpu_percent, "CPU_glob": self.resources.get_global_cpu_percent,
+                                    "RAM_app": self.resources.get_process_memory_percent,
+                                    "RAM_glob": self.resources.get_global_memory_percent, "SWAP_app": self.resources.get_process_swap_percent,
+                                    "SWAP_glob": self.resources.get_global_swap_percent}
 
     def launch_main_loop(self):
         self.get_resources_and_logs()
@@ -60,11 +61,14 @@ class MainLoop:
         self.make_request(payload, self.logs_url)
 
     def get_all_needed_logs(self):
-        payload = {}
+        payload = {"logs": []}
         for log in self.logs_to_get:
             logs = self.log.get_logs(log)
             if logs:
-                payload[log] = logs
+                log_data = {log: logs}
+                payload["logs"] += [log_data]
+        if not payload["logs"]:
+            return {}
         return payload
 
     def make_request(self, payload, url):
