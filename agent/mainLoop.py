@@ -7,27 +7,27 @@ from requests.auth import HTTPBasicAuth
 
 from logs import Log
 from resources import Resources
-
+import json
 import psutil
 
 
 class MainLoop:
     resources = None
-    resources_to_get = {'cpu_process': True, 'cpu_global': True, 'memory_process': True,
-                        'memory_global': True, 'swap_process': True, 'swap_global': True}
+    resources_to_get = {"CPU_app": True, "CPU_glob": True, "RAM_app": True,
+                        "RAM_glob": True, "SWAP_app": True, "SWAP_glob": True}
     resources_functions = None
-    logs_to_get         = {}
-    api_key             = ""
-    logs_url            = ""
-    resources_url       = ""
-    log                 = None
+    logs_to_get = {"nginx": "/var/log/nginx/error.log"}
+    api_key = ""
+    logs_url = "http://localhost:3000/api/v1/logs"
+    resources_url = "http://localhost:3000/api/v1/metrics"
+    log = None
 
     def __init__(self):
         self.resources = Resources(sys.argv[2])
         self.api_key = sys.argv[1]
         self.log = Log(self.logs_to_get)
-        self.resources_functions = {'cpu_process': self.resources.get_process_cpu_percent, 'cpu_global': self.resources.get_global_cpu_percent, 'memory_process': self.resources.get_process_memory_percent,
-                                    'memory_global': self.resources.get_global_memory_percent, 'swap_process': self.resources.get_process_swap_percent, 'swap_global': self.resources.get_global_swap_percent}
+        self.resources_functions = {"CPU_app": self.resources.get_process_cpu_percent, "CPU_glob": self.resources.get_global_cpu_percent, "RAM_app": self.resources.get_process_memory_percent,
+                                    "RAM_glob": self.resources.get_global_memory_percent, "SWAP_app": self.resources.get_process_swap_percent, "SWAP_glob": self.resources.get_global_swap_percent}
 
     def launch_main_loop(self):
         self.get_resources_and_logs()
@@ -51,7 +51,8 @@ class MainLoop:
                     resource = self.resources_functions[p]()
                     payload[p] = resource
         except psutil.NoSuchProcess:
-            print('Could not find process "' + self.resources.process_name + '"')
+            print('Could not find process "' +
+                  self.resources.process_name + '"')
         return payload
 
     def send_logs(self):
@@ -68,5 +69,6 @@ class MainLoop:
 
     def make_request(self, payload, url):
         if payload:
-            pass
-            # TODO Make Post request to API with basic auth
+            payload = json.dumps(payload)
+            requests.post(url, data=payload,
+                          auth=HTTPBasicAuth("", self.api_key))
