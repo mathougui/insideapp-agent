@@ -35,17 +35,40 @@ class Resources:
         try:
             return psutil.virtual_memory()[2]
         except IndexError:
-            print("Could not load global memory info")
+            print("Could not load global RAM info")
 
     def get_process_swap_percent(self):
         try:
-            return self.process.memory_full_info()[9]
+            return (self.process.memory_full_info()[9]) * 100 / psutil.swap_memory()[0]
         except IndexError:
-            print("Could not load process swap info")
+            print("Could not load process SWAP info")
 
     @staticmethod
     def get_global_swap_percent():
         try:
             return psutil.swap_memory()[3]
         except IndexError:
-            print("Could not load global swap info")
+            print("Could not load global SWAP info")
+
+    @staticmethod
+    def get_global_disk_usage_percent():
+        try:
+            # TODO partitions?
+            # TODO check if "/" works on windows
+            return psutil.disk_usage('/')[3] / 1000000
+        except IndexError:
+            print("Could not load global disk usage info")
+
+    @staticmethod
+    def get_total_memory():
+        try:
+            return psutil.virtual_memory()[0] / 1000000000
+        except IndexError:
+            print("Could not load total RAM info")
+
+    @staticmethod
+    def get_total_swap():
+        try:
+            return psutil.swap_memory()[0] / 1000000000
+        except IndexError:
+            print("Could not load total SWAP info")
