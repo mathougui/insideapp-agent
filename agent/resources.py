@@ -20,38 +20,40 @@ class Resources:
             print('Could not find process "' + self.process_name + '"')
             exit(1)
 
-    def get_process_cpu_percent(self):
-        return self.process.cpu_percent()
-
     @staticmethod
-    def get_global_cpu_percent():
+    def get_cpu_percent():
         return psutil.cpu_percent()
 
-    def get_process_memory_percent(self):
-        return self.process.memory_percent()
-
     @staticmethod
-    def get_global_memory_percent():
+    def get_ram_percent():
         try:
             return psutil.virtual_memory()[2]
         except IndexError:
             print("Could not load global RAM info")
 
-    def get_process_swap_percent(self):
+    @staticmethod
+    def get_ram_total():
         try:
-            return (self.process.memory_full_info()[9]) * 100 / psutil.swap_memory()[0]
+            return psutil.virtual_memory()[0] / 1000000000
         except IndexError:
-            print("Could not load process SWAP info")
+            print("Could not load total RAM info")
 
     @staticmethod
-    def get_global_swap_percent():
+    def get_swap_percent():
         try:
             return psutil.swap_memory()[3]
         except IndexError:
             print("Could not load global SWAP info")
 
     @staticmethod
-    def get_global_disk_usage_percent():
+    def get_swap_total():
+        try:
+            return psutil.swap_memory()[0] / 1000000000
+        except IndexError:
+            print("Could not load total SWAP info")
+
+    @staticmethod
+    def get_disk_percent():
         try:
             # TODO partitions?
             # TODO check if "/" works on windows
@@ -59,16 +61,14 @@ class Resources:
         except IndexError:
             print("Could not load global disk usage info")
 
-    @staticmethod
-    def get_total_memory():
-        try:
-            return psutil.virtual_memory()[0] / 1000000000
-        except IndexError:
-            print("Could not load total RAM info")
+    def get_process_cpu_percent(self):
+        return self.process.cpu_percent()
 
-    @staticmethod
-    def get_total_swap():
+    def get_process_ram_percent(self):
+        return self.process.memory_percent()
+
+    def get_process_swap_percent(self):
         try:
-            return psutil.swap_memory()[0] / 1000000000
+            return (self.process.memory_full_info()[9]) * 100 / psutil.swap_memory()[0]
         except IndexError:
-            print("Could not load total SWAP info")
+            print("Could not load process SWAP info")
