@@ -1,2 +1,5 @@
 # insideapp-agent
 Agent for insideapp
+
+### Environment variables
+* `API_URL` (`http://localhost:3000` by default)

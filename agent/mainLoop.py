@@ -1,4 +1,5 @@
 import json
+import os
 import sys
 import time
 
@@ -15,9 +16,10 @@ class MainLoop:
     resources_names = []
     resources_to_get = {}
     logs_to_get = {}
-    logs_url = "http://localhost:3000/api/v1/logs"
-    resources_url = "http://localhost:3000/api/v1/metrics"
     resources_functions = {}
+    api_url = "http://localhost:3000"
+    logs_url = api_url + "/api/v1/logs"
+    resources_url = api_url + "/api/v1/metrics"
 
     def fill_resources_to_get(self):
         for resource_name in self.resources_names:
@@ -39,6 +41,8 @@ class MainLoop:
         self.api_key = sys.argv[1]
         self.log = Log(self.logs_to_get)
         self.fill_resources_to_get()
+        if "API_URL" in os.environ:
+            self.api_url = os.environ["API_URL"]
 
     def launch_main_loop(self):
         self.get_resources_and_logs()
