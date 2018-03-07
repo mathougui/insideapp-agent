@@ -1,13 +1,16 @@
-import sys
+import argparse
 
 from mainLoop import MainLoop
 
 
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: insideapp [api-key] [process name]")
-        return
-    api_call = MainLoop()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose', action="store_true")
+    parser.add_argument('api_key', action="store")
+    parser.add_argument('process_name', action="store")
+    args = parser.parse_args()
+
+    api_call = MainLoop(args)
     api_call.launch_main_loop()
 
 

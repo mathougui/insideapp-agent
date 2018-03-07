@@ -1,6 +1,5 @@
 import json
 import os
-import sys
 import time
 from datetime import datetime
 
@@ -36,12 +35,13 @@ class MainLoop:
             except KeyError:
                 exit(1)
 
-    def __init__(self):
-        self.resources = Resources(sys.argv[2])
+    def __init__(self, args):
+        self.resources = Resources(args.process_name)
         self.read_config_file()
-        self.api_key = sys.argv[1]
+        self.api_key = args.api_key
         self.log = Log(self.logs_to_get)
         self.fill_resources_to_get()
+        self.verbose = args.verbose
         if "API_URL" in os.environ:
             self.api_url = os.environ["API_URL"]
 
@@ -92,6 +92,7 @@ class MainLoop:
     def make_request(self, payload, url):
         payload["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
         payload = json.dumps(payload)
-        print(payload)
+        if self.verbose:
+            print(url + ":\n\t" + payload)
         requests.post(url, data=payload,
                       auth=HTTPBasicAuth("", self.api_key))
