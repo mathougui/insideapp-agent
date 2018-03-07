@@ -2,6 +2,7 @@ import json
 import os
 import sys
 import time
+from datetime import datetime
 
 import psutil
 import requests
@@ -15,7 +16,7 @@ class MainLoop:
     resources = None
     resources_names = []
     resources_to_get = {}
-    logs_to_get = {}
+    logs_to_get = {"nginx": "/var/log/nginx/error.log"}
     resources_functions = {}
     api_url = "http://localhost:3000"
     logs_url = api_url + "/api/v1/logs"
@@ -89,7 +90,8 @@ class MainLoop:
         return payload
 
     def make_request(self, payload, url):
-        if payload:
-            payload = json.dumps(payload)
-            requests.post(url, data=payload,
-                          auth=HTTPBasicAuth("", self.api_key))
+        payload["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        payload = json.dumps(payload)
+        print(payload)
+        requests.post(url, data=payload,
+                      auth=HTTPBasicAuth("", self.api_key))
