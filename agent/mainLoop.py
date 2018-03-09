@@ -1,33 +1,49 @@
-import sys
-import threading
+import json
+import os
 import time
+from datetime import datetime
 
+import psutil
 import requests
 from requests.auth import HTTPBasicAuth
 
 from logs import Log
 from resources import Resources
 
-import psutil
-
 
 class MainLoop:
     resources = None
-    resources_to_get = {'cpu_process': True, 'cpu_global': True, 'memory_process': True,
-                        'memory_global': True, 'swap_process': True, 'swap_global': True}
-    resources_functions = None
-    logs_to_get         = {}
-    api_key             = ""
-    logs_url            = ""
-    resources_url       = ""
-    log                 = None
+    resources_names = []
+    resources_to_get = {}
+    logs_to_get = {"nginx": "/var/log/nginx/error.log"}
+    resources_functions = {}
+    api_url = "http://localhost:3000"
+    logs_url = api_url + "/api/v1/logs"
+    resources_url = api_url + "/api/v1/metrics"
 
-    def __init__(self):
-        self.resources = Resources(sys.argv[2])
-        self.api_key = sys.argv[1]
+    def fill_resources_to_get(self):
+        for resource_name in self.resources_names:
+            # TODO Get the real values from API
+            self.resources_to_get[resource_name] = True
+
+    def read_config_file(self):
+        with open('config.json') as config_file:
+            try:
+                self.resources_names = json.load(config_file)["resources"]
+                for resource in self.resources_names:
+                    self.resources_functions[resource] = getattr(self.resources, "get_" + resource)
+            except KeyError:
+                exit(1)
+
+    def __init__(self, args):
+        self.resources = Resources(args.process_name)
+        self.read_config_file()
+        self.api_key = args.api_key
         self.log = Log(self.logs_to_get)
-        self.resources_functions = {'cpu_process': self.resources.get_process_cpu_percent, 'cpu_global': self.resources.get_global_cpu_percent, 'memory_process': self.resources.get_process_memory_percent,
-                                    'memory_global': self.resources.get_global_memory_percent, 'swap_process': self.resources.get_process_swap_percent, 'swap_global': self.resources.get_global_swap_percent}
+        self.fill_resources_to_get()
+        self.verbose = args.verbose
+        if "API_URL" in os.environ:
+            self.api_url = os.environ["API_URL"]
 
     def launch_main_loop(self):
         self.get_resources_and_logs()
@@ -48,10 +64,14 @@ class MainLoop:
         try:
             with self.resources.process.oneshot():
                 for p in self.resources_to_get:
-                    resource = self.resources_functions[p]()
-                    payload[p] = resource
+                    try:
+                        resource = self.resources_functions[p]()
+                        payload[p] = resource
+                    except IndexError:
+                        pass
         except psutil.NoSuchProcess:
-            print('Could not find process "' + self.resources.process_name + '"')
+            print('Could not find process "' +
+                  self.resources.process_name + '"')
         return payload
 
     def send_logs(self):
@@ -59,14 +79,20 @@ class MainLoop:
         self.make_request(payload, self.logs_url)
 
     def get_all_needed_logs(self):
-        payload = {}
+        payload = {"logs": []}
         for log in self.logs_to_get:
             logs = self.log.get_logs(log)
             if logs:
-                payload[log] = logs
+                log_data = {log: logs}
+                payload["logs"] += [log_data]
+        if not payload["logs"]:
+            return {}
         return payload
 
     def make_request(self, payload, url):
-        if payload:
-            pass
-            # TODO Make Post request to API with basic auth
+        payload["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        payload = json.dumps(payload)
+        if self.verbose:
+            print(url + ":\n\t" + payload)
+        requests.post(url, data=payload,
+                      auth=HTTPBasicAuth("", self.api_key))
