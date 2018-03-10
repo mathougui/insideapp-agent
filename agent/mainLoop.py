@@ -83,7 +83,7 @@ class MainLoop:
         for log in self.logs_to_get:
             logs = self.log.get_logs(log)
             if logs:
-                log_data = {log: logs}
+                log_data = {"type": log, "messages": logs}
                 payload["logs"] += [log_data]
         if not payload["logs"]:
             return {}
