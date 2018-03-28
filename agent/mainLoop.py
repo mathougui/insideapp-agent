@@ -22,8 +22,8 @@ class MainLoop:
     api_url = "http://localhost:5000"
     admin_url = "http://localhost:3000/api/v1/configuration"
     logs_url = api_url + "/api/v1/logs"
-    dynamic_resources_url = api_url + "/api/v1/metrics"
-    static_resources_url = api_url + "/api/v1/metrics/static"
+    dynamic_resources_url = api_url + "/api/v1/metrics/upload"
+    static_resources_url = api_url + "/api/v1/metrics/static/upload"
 
     def fill_resources_to_get(self):
         for resource_name in self.dynamic_resources_names:
