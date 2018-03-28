@@ -2,4 +2,5 @@
 Agent for insideapp
 
 ### Environment variables
-* `API_URL` (`http://localhost:3000` by default)
+* `API_URL` (`http://localhost:5000` by default)
+* `ADMIN_URL` (`http://localhost:3000` by default)

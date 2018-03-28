@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from datetime import datetime
+from threading import Thread
 
 import psutil
 import requests
@@ -15,19 +15,19 @@ class MainLoop:
     resources = None
     dynamic_resources_names = []
     static_resources_names = []
-    resources_to_get = {}
+    resources_to_get = []
     logs_to_get = {"nginx": "/var/log/nginx/error.log"}
     dynamic_resources_functions = {}
     static_resources_functions = {}
-    api_url = "http://localhost:3000"
+    api_url = "http://localhost:5000"
+    admin_url = "http://localhost:3000/api/v1/configuration"
     logs_url = api_url + "/api/v1/logs"
     dynamic_resources_url = api_url + "/api/v1/metrics"
     static_resources_url = api_url + "/api/v1/metrics/static"
 
     def fill_resources_to_get(self):
         for resource_name in self.dynamic_resources_names:
-            # TODO Get the real values from API
-            self.resources_to_get[resource_name] = True
+            self.resources_to_get += [resource_name]
 
     def read_config_file(self):
         with open('config.json') as config_file:
@@ -51,8 +51,33 @@ class MainLoop:
         self.verbose = args.verbose
         if "API_URL" in os.environ:
             self.api_url = os.environ["API_URL"]
+        if "ADMIN_URL" in os.environ:
+            self.api_url = os.environ["ADMIN_URL"]
+        self.get_config()
+
+    def get_config(self):
+        r = requests.get(self.admin_url, auth=HTTPBasicAuth("", self.api_key))
+        if not r or not r.json():
+            print("Could not get configuration")
+            # TODO Should exit when api will send the right format of configuration
+        else:
+            config = r.json()
+            if self.verbose:
+                print("User configuration: " + str(config))
+            self.resources_to_get = []
+            self.logs_to_get = {}
+            for resource in config["resources"]:
+                self.resources_to_get += [resource]
+            for log in config["logs"]:
+                self.logs_to_get[log["type"]] = log["path"]
+
+    def get_config_loop(self):
+        while True:
+            self.get_config()
+            time.sleep(30)
 
     def launch_main_loop(self):
+        Thread(target=self.get_config_loop).start()
         self.send_static_resources()
         self.get_resources_and_logs()
 
@@ -112,7 +137,7 @@ class MainLoop:
         return payload
 
     def make_request(self, payload, url):
-        payload["timestamp"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        payload["timestamp"] = round(time.time() * 1000)
         payload = json.dumps(payload)
         if self.verbose:
             print(url + ":\n\t" + payload)
