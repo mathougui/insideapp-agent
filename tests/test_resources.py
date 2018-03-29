@@ -28,3 +28,13 @@ class ResourceTest(unittest.TestCase):
     def test_ram_percent(self):
         self.assertGreaterEqual(self.resource.get_ram_percent(), 0)
         self.assertLessEqual(self.resource.get_ram_percent(), 100)
+
+    def test_swap_used(self):
+        self.assertGreaterEqual(self.resource.get_swap_used(), 0)
+
+    def test_swap_free(self):
+        self.assertGreaterEqual(self.resource.get_swap_free(), 0)
+
+    def test_swap_percent(self):
+        self.assertGreaterEqual(self.resource.get_swap_percent(), 0)
+        self.assertLessEqual(self.resource.get_swap_percent(), 100)
