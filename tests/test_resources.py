@@ -19,9 +19,6 @@ class ResourceTest(unittest.TestCase):
         self.assertGreaterEqual(self.resource.get_cpu_percent(), 0)
         self.assertLessEqual(self.resource.get_cpu_percent(), 100)
 
-    def test_cpu_freq_current(self):
-        self.assertGreaterEqual(self.resource.get_cpu_freq_current(), 0)
-
     def test_ram_available(self):
         self.assertGreaterEqual(self.resource.get_ram_available(), 0)
 
