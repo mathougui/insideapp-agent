@@ -17,8 +17,9 @@ class ResourceTest(unittest.TestCase):
         self.assertGreaterEqual(self.resource.get_cpu_time_idle(), 0)
 
     def test_cpu_percent(self):
-        self.assertGreaterEqual(self.resource.get_cpu_percent(), 0)
-        self.assertLessEqual(self.resource.get_cpu_percent(), 100)
+        percent = self.resource.get_cpu_percent()
+        self.assertGreaterEqual(percent, 0)
+        self.assertLessEqual(percent, 100)
 
     def test_ram_available(self):
         self.assertGreaterEqual(self.resource.get_ram_available(), 0)
@@ -27,8 +28,9 @@ class ResourceTest(unittest.TestCase):
         self.assertGreater(self.resource.get_ram_used(), 0)
 
     def test_ram_percent(self):
-        self.assertGreaterEqual(self.resource.get_ram_percent(), 0)
-        self.assertLessEqual(self.resource.get_ram_percent(), 100)
+        percent = self.resource.get_ram_percent()
+        self.assertGreaterEqual(percent, 0)
+        self.assertLessEqual(percent, 100)
 
     def test_swap_used(self):
         self.assertGreaterEqual(self.resource.get_swap_used(), 0)
@@ -37,8 +39,9 @@ class ResourceTest(unittest.TestCase):
         self.assertGreaterEqual(self.resource.get_swap_free(), 0)
 
     def test_swap_percent(self):
-        self.assertGreaterEqual(self.resource.get_swap_percent(), 0)
-        self.assertLessEqual(self.resource.get_swap_percent(), 100)
+        percent = self.resource.get_swap_percent()
+        self.assertGreaterEqual(percent, 0)
+        self.assertLessEqual(percent, 100)
 
     def test_disk_used(self):
         self.assertGreaterEqual(self.resource.get_disk_used(), 0)
@@ -47,8 +50,9 @@ class ResourceTest(unittest.TestCase):
         self.assertGreaterEqual(self.resource.get_disk_free(), 0)
 
     def test_disk_percent(self):
-        self.assertGreaterEqual(self.resource.get_disk_percent(), 0)
-        self.assertLessEqual(self.resource.get_disk_percent(), 100)
+        percent = self.resource.get_disk_percent()
+        self.assertGreaterEqual(percent, 0)
+        self.assertLessEqual(percent, 100)
 
     def test_disk_read_count(self):
         self.assertGreaterEqual(self.resource.get_disk_read_count(), 0)
@@ -85,3 +89,43 @@ class ResourceTest(unittest.TestCase):
 
     def test_swap_total(self):
         self.assertGreaterEqual(self.resource.get_swap_total(), 0)
+
+    def test_process_create_time(self):
+        self.assertIsInstance(datetime.strptime(self.resource.get_process_create_time(), "%Y-%m-%d %H:%M:%S"), datetime)
+
+    def test_process_status(self):
+        possible_status = ["Running", "Dead", "Disk Sleep", "Idle", "Locked", "Sleeping", "Stopped", "Tracing Stop", "Waiting", "Waking", "Zombie"]
+        self.assertIn(self.resource.get_process_status(), possible_status)
+
+    def test_process_read_count(self):
+        self.assertGreaterEqual(self.resource.get_process_read_count(), 0)
+
+    def test_process_write_count(self):
+        self.assertGreaterEqual(self.resource.get_process_write_count(), 0)
+
+    def test_process_read_bytes(self):
+        self.assertGreaterEqual(self.resource.get_process_read_bytes(), 0)
+
+    def test_process_write_bytes(self):
+        self.assertGreaterEqual(self.resource.get_process_write_bytes(), 0)
+
+    def test_process_cpu_percent(self):
+        percent = self.resource.get_process_cpu_percent()
+        self.assertGreaterEqual(percent, 0)
+        self.assertLessEqual(percent, 100)
+
+    def test_process_swap_used(self):
+        self.assertGreaterEqual(self.resource.get_process_swap_used(), 0)
+
+    def test_process_swap_percent(self):
+        percent = self.resource.get_process_swap_percent()
+        self.assertGreaterEqual(percent, 0)
+        self.assertLessEqual(percent, 100)
+
+    def test_process_ram_used(self):
+        self.assertGreaterEqual(self.resource.get_process_ram_used(), 0)
+
+    def test_process_ram_percent(self):
+        percent = self.resource.get_process_ram_percent()
+        self.assertGreaterEqual(percent, 0)
+        self.assertLessEqual(percent, 100)
