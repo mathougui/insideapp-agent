@@ -57,3 +57,21 @@ class ResourceTest(unittest.TestCase):
 
     def test_disk_read_time(self):
         self.assertGreaterEqual(self.resource.get_disk_read_time(), 0)
+
+    def test_network_bytes_sent(self):
+        self.assertGreaterEqual(self.resource.get_network_bytes_sent(), 0)
+
+    def test_network_bytes_received(self):
+        self.assertGreaterEqual(self.resource.get_network_bytes_received(), 0)
+
+    def test_network_packets_sent(self):
+        self.assertGreaterEqual(self.resource.get_network_packets_sent(), 0)
+
+    def test_network_packets_received(self):
+        self.assertGreaterEqual(self.resource.get_network_packets_received(), 0)
+
+    def test_network_dropped_count_incoming(self):
+        self.assertGreaterEqual(self.resource.get_network_dropped_count_incoming(), 0)
+
+    def test_network_dropped_count_outgoing(self):
+        self.assertGreaterEqual(self.resource.get_network_dropped_count_outgoing(), 0)
