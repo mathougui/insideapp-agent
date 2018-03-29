@@ -165,7 +165,10 @@ class Resources:
         return to_mb(self.process.memory_full_info()[9])
 
     def get_process_swap_percent(self):
-        return (self.process.memory_full_info()[9]) * 100 / psutil.swap_memory()[0]
+        try:
+            return (self.process.memory_full_info()[9]) * 100 / psutil.swap_memory()[0]
+        except ZeroDivisionError:
+            return 0
 
     def get_process_ram_used(self):
         return to_mb(self.process.memory_full_info()[0])
