@@ -38,3 +38,22 @@ class ResourceTest(unittest.TestCase):
     def test_swap_percent(self):
         self.assertGreaterEqual(self.resource.get_swap_percent(), 0)
         self.assertLessEqual(self.resource.get_swap_percent(), 100)
+
+    def test_disk_used(self):
+        self.assertGreaterEqual(self.resource.get_disk_used(), 0)
+
+    def test_disk_free(self):
+        self.assertGreaterEqual(self.resource.get_disk_free(), 0)
+
+    def test_disk_percent(self):
+        self.assertGreaterEqual(self.resource.get_disk_percent(), 0)
+        self.assertLessEqual(self.resource.get_disk_percent(), 100)
+
+    def test_disk_read_count(self):
+        self.assertGreaterEqual(self.resource.get_disk_read_count(), 0)
+
+    def test_disk_write_count(self):
+        self.assertGreaterEqual(self.resource.get_disk_write_count(), 0)
+
+    def test_disk_read_time(self):
+        self.assertGreaterEqual(self.resource.get_disk_read_time(), 0)
