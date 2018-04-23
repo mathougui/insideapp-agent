@@ -16,7 +16,7 @@ class MainLoop:
     dynamic_resources_names = []
     static_resources_names = []
     resources_to_get = []
-    logs_to_get = {"nginx": "/var/log/nginx/error.log"}
+    logs_to_get = {}
     dynamic_resources_functions = {}
     static_resources_functions = {}
     api_url = "http://localhost:5000"
