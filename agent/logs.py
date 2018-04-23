@@ -3,9 +3,13 @@ class Log:
 
     def __init__(self, filenames):
         for filename in filenames:
-            file = open(filenames[filename], 'r')
-            file.seek(0, 2)
-            self.files[filename] = file
+            try:
+                file = open(filenames[filename], 'r')
+                file.seek(0, 2)
+                self.files[filename] = file
+            except FileNotFoundError:
+                print("Could not find file: " + filenames[filename])
+                exit(1)
 
     def get_logs(self, log_type):
         lines = self.files[log_type].readlines()
