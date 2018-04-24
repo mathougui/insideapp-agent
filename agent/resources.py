@@ -10,9 +10,6 @@ def to_mb(nb_bytes):
 class Resources:
     process_name = ""
     process = None
-    psutil_status_to_string = {psutil.STATUS_RUNNING: "Running", psutil.STATUS_DEAD: "Dead", psutil.STATUS_DISK_SLEEP: "Disk Sleep", psutil.STATUS_IDLE: "Idle",
-                               psutil.STATUS_LOCKED: "Locked", psutil.STATUS_SLEEPING: "Sleeping", psutil.STATUS_STOPPED: "Stopped", psutil.STATUS_TRACING_STOP: "Tracing stop",
-                               psutil.STATUS_WAITING: "Waiting", psutil.STATUS_WAKING: "Waking", psutil.STATUS_ZOMBIE: "Zombie"}
 
     def __init__(self, process_name):
         self.process_name = process_name
@@ -139,9 +136,6 @@ class Resources:
 
     def get_process_create_time(self):
         return datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%d %H:%M:%S")
-
-    def get_process_status(self):
-        return self.psutil_status_to_string[self.process.status()]
 
     def get_process_read_count(self):
         return self.process.io_counters()[0]

@@ -24,7 +24,6 @@
     "network_packets_received",
     "network_dropped_count_incoming",
     "network_dropped_count_outgoing",
-    "process_status",
     "process_read_count",
     "process_write_count",
     "process_read_bytes",
