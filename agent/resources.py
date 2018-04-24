@@ -137,9 +137,6 @@ class Resources:
     def get_swap_total():
         return to_mb(psutil.swap_memory()[0])
 
-    def get_process_env_variables(self):
-        return self.process.environ()
-
     def get_process_create_time(self):
         return datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%d %H:%M:%S")
 
