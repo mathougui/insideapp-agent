@@ -93,10 +93,6 @@ class ResourceTest(unittest.TestCase):
     def test_process_create_time(self):
         self.assertIsInstance(datetime.strptime(self.resource.get_process_create_time(), "%Y-%m-%d %H:%M:%S"), datetime)
 
-    def test_process_status(self):
-        possible_status = ["Running", "Dead", "Disk Sleep", "Idle", "Locked", "Sleeping", "Stopped", "Tracing Stop", "Waiting", "Waking", "Zombie"]
-        self.assertIn(self.resource.get_process_status(), possible_status)
-
     def test_process_read_count(self):
         self.assertGreaterEqual(self.resource.get_process_read_count(), 0)
 
