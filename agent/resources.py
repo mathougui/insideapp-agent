@@ -10,13 +10,12 @@ def to_mb(nb_bytes):
 
 def format_hate(date):
     tz = str(time.timezone // 3600)
-    tz_abs = tz.replace("-", "")
-    if len(tz_abs) < 2:
-        tz_abs = "0" + tz_abs
-    if tz[0] == '-':
-        tz = tz[0] + tz_abs
-    date += "Z" + tz + ":00"
-    return date
+    if tz[0] != '-' or tz[0] == '+':
+        tz = "+" + tz
+    if len(tz) < 3:
+        tz = tz[0] + "0" + tz[1]
+    tz = date + tz + ":00"
+    return tz
 
 
 class Resources:
