@@ -1,10 +1,22 @@
 import datetime
+import time
 
 import psutil
 
 
 def to_mb(nb_bytes):
     return nb_bytes / 1048576
+
+
+def format_hate(date):
+    tz = str(time.timezone // 3600)
+    tz_abs = tz.replace("-", "")
+    if len(tz_abs) < 2:
+        tz_abs = "0" + tz_abs
+    if tz[0] == '-':
+        tz = tz[0] + tz_abs
+    date += "Z" + tz + ":00"
+    return date
 
 
 class Resources:
@@ -124,7 +136,7 @@ class Resources:
 
     @staticmethod
     def get_boot_time():
-        return datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+        return format_hate(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     @staticmethod
     def get_ram_total():
@@ -135,7 +147,7 @@ class Resources:
         return to_mb(psutil.swap_memory()[0])
 
     def get_process_create_time(self):
-        return datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%d %H:%M:%S")
+        return format_hate(datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     def get_process_read_count(self):
         return self.process.io_counters()[0]

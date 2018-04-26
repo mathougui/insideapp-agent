@@ -93,6 +93,8 @@ class MainLoop:
         except psutil.NoSuchProcess:
             print('Could not find process "' +
                   self.resources.process_name + '"')
+        if self.verbose:
+            print(self.static_resources_url + ":\n\t" + str(payload))
         self.make_request(payload, self.static_resources_url)
 
     def get_resources_and_logs(self):
