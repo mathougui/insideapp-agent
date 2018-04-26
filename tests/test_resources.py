@@ -1,5 +1,4 @@
 import unittest
-from datetime import datetime
 
 from agent import resources
 
@@ -81,17 +80,11 @@ class ResourceTest(unittest.TestCase):
     def test_network_dropped_count_outgoing(self):
         self.assertGreaterEqual(self.resource.get_network_dropped_count_outgoing(), 0)
 
-    def test_boot_time(self):
-        self.assertIsInstance(datetime.strptime(self.resource.get_boot_time(), "%Y-%m-%d %H:%M:%S"), datetime)
-
     def test_ram_total(self):
         self.assertGreaterEqual(self.resource.get_ram_total(), 0)
 
     def test_swap_total(self):
         self.assertGreaterEqual(self.resource.get_swap_total(), 0)
-
-    def test_process_create_time(self):
-        self.assertIsInstance(datetime.strptime(self.resource.get_process_create_time(), "%Y-%m-%d %H:%M:%S"), datetime)
 
     def test_process_read_count(self):
         self.assertGreaterEqual(self.resource.get_process_read_count(), 0)
