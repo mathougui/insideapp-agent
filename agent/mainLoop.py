@@ -3,6 +3,7 @@ import os
 import time
 from threading import Thread
 
+import pkg_resources
 import psutil
 import requests
 from requests.auth import HTTPBasicAuth
@@ -30,7 +31,7 @@ class MainLoop:
             self.resources_to_get += [resource_name]
 
     def read_config_file(self):
-        with open('config.json') as config_file:
+        with pkg_resources.resource_stream('resources', 'resources/config.json') as config_file:
             try:
                 config_file = json.load(config_file)
                 self.dynamic_resources_names = config_file["dynamic_resources"]
@@ -59,7 +60,7 @@ class MainLoop:
         r = requests.get(self.admin_url, auth=HTTPBasicAuth("", self.api_key))
         if not r or not r.json():
             print("Could not get configuration")
-            # TODO Should exit when api will send the right format of configuration
+            exit(1)
         else:
             config = r.json()
             if self.verbose:
