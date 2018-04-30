@@ -52,11 +52,15 @@ class MainLoop:
         self.verbose = args.verbose
         if "API_URL" in os.environ:
             self.api_url = os.environ["API_URL"]
+            self.dynamic_resources_url = self.api_url + "/api/v1/metrics/upload"
+            self.static_resources_url = self.api_url + "/api/v1/metrics/static/upload"
+            self.logs_url = self.api_url + "/api/v1/logs"
         if "ADMIN_URL" in os.environ:
             self.admin_url = os.environ["ADMIN_URL"] + "/api/v1/configuration"
         self.get_config()
 
     def get_config(self):
+        print("Admin url: " + self.admin_url)
         r = requests.get(self.admin_url, auth=HTTPBasicAuth("", self.api_key))
         if not r or not r.json():
             print("Could not get configuration")
