@@ -53,7 +53,7 @@ class MainLoop:
         if "API_URL" in os.environ:
             self.api_url = os.environ["API_URL"]
         if "ADMIN_URL" in os.environ:
-            self.api_url = os.environ["ADMIN_URL"]
+            self.admin_url = os.environ["ADMIN_URL"]
         self.get_config()
 
     def get_config(self):
