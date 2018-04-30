@@ -60,7 +60,6 @@ class MainLoop:
         self.get_config()
 
     def get_config(self):
-        print("Admin url: " + self.admin_url)
         r = requests.get(self.admin_url, auth=HTTPBasicAuth("", self.api_key))
         if not r or not r.json():
             print("Could not get configuration")
