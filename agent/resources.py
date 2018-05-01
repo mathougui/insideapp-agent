@@ -1,4 +1,5 @@
 import datetime
+import sys
 import time
 
 import psutil
@@ -35,7 +36,7 @@ class Resources:
             self.process = list_processes[0]
         else:
             print('Could not find process "' + self.process_name + '"')
-            exit(1)
+            sys.exit(1)
 
     @staticmethod
     def get_cpu_time_user():

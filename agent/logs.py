@@ -1,3 +1,6 @@
+import sys
+
+
 class Log:
     files = {}
 
@@ -9,7 +12,7 @@ class Log:
                 self.files[filename] = file
             except FileNotFoundError:
                 print("Could not find file: " + filenames[filename])
-                exit(1)
+                sys.exit(1)
 
     def get_logs(self, log_type):
         lines = self.files[log_type].readlines()
