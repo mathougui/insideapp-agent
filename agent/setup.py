@@ -3,7 +3,7 @@ from cx_Freeze import setup, Executable
 # Dependencies are automatically detected, but it might need
 # fine tuning.
 build_exe_options = {
-    "packages": ['idna.idnadata', 'appdirs', 'packaging.specifiers', 'packaging.requirements', 'psutil'],
+    "packages": ['six', 'idna.idnadata', 'appdirs', 'packaging.specifiers', 'packaging.requirements', 'psutil'],
     "include_files": ["config.json"]
 }
 
