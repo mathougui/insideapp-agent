@@ -1,4 +1,6 @@
 import datetime
+import sys
+import time
 
 import psutil
 
@@ -7,12 +9,19 @@ def to_mb(nb_bytes):
     return nb_bytes / 1048576
 
 
+def format_hate(date):
+    tz = str(time.timezone // 3600)
+    if tz[0] != '-' or tz[0] == '+':
+        tz = "+" + tz
+    if len(tz) < 3:
+        tz = tz[0] + "0" + tz[1]
+    tz = date + tz + ":00"
+    return tz
+
+
 class Resources:
     process_name = ""
     process = None
-    psutil_status_to_string = {psutil.STATUS_RUNNING: "Running", psutil.STATUS_DEAD: "Dead", psutil.STATUS_DISK_SLEEP: "Disk Sleep", psutil.STATUS_IDLE: "Idle",
-                               psutil.STATUS_LOCKED: "Locked", psutil.STATUS_SLEEPING: "Sleeping", psutil.STATUS_STOPPED: "Stopped", psutil.STATUS_TRACING_STOP: "Tracing stop",
-                               psutil.STATUS_WAITING: "Waiting", psutil.STATUS_WAKING: "Waking", psutil.STATUS_ZOMBIE: "Zombie"}
 
     def __init__(self, process_name):
         self.process_name = process_name
@@ -27,7 +36,7 @@ class Resources:
             self.process = list_processes[0]
         else:
             print('Could not find process "' + self.process_name + '"')
-            exit(1)
+            sys.exit(1)
 
     @staticmethod
     def get_cpu_time_user():
@@ -127,7 +136,7 @@ class Resources:
 
     @staticmethod
     def get_boot_time():
-        return datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")
+        return format_hate(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     @staticmethod
     def get_ram_total():
@@ -137,14 +146,8 @@ class Resources:
     def get_swap_total():
         return to_mb(psutil.swap_memory()[0])
 
-    def get_process_env_variables(self):
-        return self.process.environ()
-
     def get_process_create_time(self):
-        return datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%d %H:%M:%S")
-
-    def get_process_status(self):
-        return self.psutil_status_to_string[self.process.status()]
+        return format_hate(datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     def get_process_read_count(self):
         return self.process.io_counters()[0]
@@ -165,7 +168,10 @@ class Resources:
         return to_mb(self.process.memory_full_info()[9])
 
     def get_process_swap_percent(self):
-        return (self.process.memory_full_info()[9]) * 100 / psutil.swap_memory()[0]
+        try:
+            return (self.process.memory_full_info()[9]) * 100 / psutil.swap_memory()[0]
+        except ZeroDivisionError:
+            return 0
 
     def get_process_ram_used(self):
         return to_mb(self.process.memory_full_info()[0])
