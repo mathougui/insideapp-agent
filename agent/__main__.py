@@ -1,9 +1,18 @@
 import argparse
+import os
+import signal
+import sys
 
 from mainLoop import MainLoop
 
 
+def signal_handler(sig, frame):
+    os.kill(os.getpid(), signal.SIGINT)
+    sys.exit(0)
+
+
 def main():
+    signal.signal(signal.SIGINT, signal_handler)
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action="store_true")
     parser.add_argument('api_key', action="store")
