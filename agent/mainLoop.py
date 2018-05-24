@@ -96,7 +96,7 @@ class MainLoop:
                     pass
         except psutil.NoSuchProcess:
             print('Could not find process "' +
-                  self.resources.process_name + '"')
+                  self.resources.process + '"')
         if self.verbose:
             print(self.static_resources_url + ":\n\t" + str(payload))
         self.make_request(payload, self.static_resources_url)
@@ -124,7 +124,7 @@ class MainLoop:
                         pass
         except psutil.NoSuchProcess:
             print('Could not find process "' +
-                  self.resources.process_name + '"')
+                  self.resources.process + '"')
         return payload
 
     def send_logs(self):

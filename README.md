@@ -23,5 +23,8 @@ nginx2: /var/log/nginx/error.log
 
 Options:
 `-n, --name <process_name>`  
-`-p, --pid <process_id>  
+`-p, --pid <process_id>   
 `-v, --verbose
+
+The agent will automatically create a daemon if not launched with the verbose mode  
+To stop this daemon, run `python __main__.py stop`
