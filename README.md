@@ -22,6 +22,6 @@ nginx2: /var/log/nginx/error.log
 ```
 
 Options:
-`-n, --name <process_name>`
-`-p, --pid <process_id>
+`-n, --name <process_name>`  
+`-p, --pid <process_id>  
 `-v, --verbose
