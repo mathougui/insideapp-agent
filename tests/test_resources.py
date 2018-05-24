@@ -4,7 +4,7 @@ from agent import resources
 
 
 class ResourceTest(unittest.TestCase):
-    resource = resources.Resources("python")
+    resource = resources.Resources(name="python")
 
     def test_cpu_time_user(self):
         self.assertGreater(self.resource.get_cpu_time_user(), 0)

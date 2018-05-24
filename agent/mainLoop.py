@@ -45,7 +45,7 @@ class MainLoop:
                 exit(1)
 
     def __init__(self, args):
-        self.resources = Resources(args.process_name)
+        self.resources = Resources(name=args.name, pid=args.pid)
         self.read_config_file()
         self.api_key = args.api_key
         self.log = Log(self.logs_to_get)
