@@ -2,6 +2,7 @@ import argparse
 import os
 import signal
 import sys
+import platform
 
 from daemon import Daemon
 from mainLoop import MainLoop
@@ -36,7 +37,7 @@ def main():
     parser.add_argument('api_key', action="store")
     args = parser.parse_args()
 
-    if not args.verbose:
+    if not args.verbose and platform.system() != "Windows":
         daemon = MyDaemon('insideapp_pid', args)
         if sys.argv[1] == 'stop':
             daemon.stop()

@@ -9,7 +9,7 @@ def to_mb(nb_bytes):
     return nb_bytes / 1048576
 
 
-def format_hate(date):
+def format_date(date):
     tz = str(time.timezone // 3600)
     if tz[0] != '-' or tz[0] == '+':
         tz = "+" + tz
@@ -140,7 +140,7 @@ class Resources:
 
     @staticmethod
     def get_boot_time():
-        return format_hate(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%dT%H:%M:%S"))
+        return format_date(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     @staticmethod
     def get_ram_total():
@@ -151,7 +151,7 @@ class Resources:
         return to_mb(psutil.swap_memory()[0])
 
     def get_process_create_time(self):
-        return format_hate(datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%dT%H:%M:%S"))
+        return format_date(datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     def get_process_read_count(self):
         return self.process.io_counters()[0]
