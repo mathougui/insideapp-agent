@@ -11,6 +11,7 @@ from requests.auth import HTTPBasicAuth
 from logs import Log
 from parse_config_file import parse_config_file
 from resources import Resources
+from config import resources
 
 
 class MainLoop:
@@ -32,11 +33,9 @@ class MainLoop:
             self.resources_to_get += [resource_name]
 
     def read_config_file(self):
-        with open('config.json') as config_file:
             try:
-                config_file = json.load(config_file)
-                self.dynamic_resources_names = config_file["dynamic_resources"]
-                self.static_resources_names = config_file["static_resources"]
+                self.dynamic_resources_names = resources["dynamic_resources"]
+                self.static_resources_names = resources["static_resources"]
                 for resource in self.dynamic_resources_names:
                     self.dynamic_resources_functions[resource] = getattr(self.resources, "get_" + resource)
                 for resource in self.static_resources_names:
