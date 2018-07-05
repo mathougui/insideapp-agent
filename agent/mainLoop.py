@@ -9,6 +9,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from logs import Log
+from parse_config_file import parse_config_file
 from resources import Resources
 
 
@@ -17,11 +18,11 @@ class MainLoop:
     dynamic_resources_names = []
     static_resources_names = []
     resources_to_get = []
-    logs_to_get = {}
+    logs_to_get = parse_config_file()
     dynamic_resources_functions = {}
     static_resources_functions = {}
-    api_url = "http://localhost:5000"
-    admin_url = "http://localhost:3000/api/v1/configuration"
+    api_url = "http://insideapp.io:5000"
+    admin_url = "http://insideapp.io/api/v1/configuration"
     logs_url = api_url + "/api/v1/logs"
     dynamic_resources_url = api_url + "/api/v1/metrics/upload"
     static_resources_url = api_url + "/api/v1/metrics/static/upload"
@@ -69,7 +70,6 @@ class MainLoop:
             if self.verbose:
                 print("User configuration: " + str(config))
             self.resources_to_get = []
-            self.logs_to_get = {}
             for resource in config["resources"]:
                 self.resources_to_get += [resource]
             for log in config["logs"]:
