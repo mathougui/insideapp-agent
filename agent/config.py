@@ -1,4 +1,4 @@
-{
+resources = {
   "dynamic_resources": [
     "cpu_time_user",
     "cpu_time_system",

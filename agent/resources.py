@@ -9,7 +9,7 @@ def to_mb(nb_bytes):
     return nb_bytes / 1048576
 
 
-def format_hate(date):
+def format_date(date):
     tz = str(time.timezone // 3600)
     if tz[0] != '-' or tz[0] == '+':
         tz = "+" + tz
@@ -20,22 +20,26 @@ def format_hate(date):
 
 
 class Resources:
-    process_name = ""
     process = None
 
-    def __init__(self, process_name):
-        self.process_name = process_name
-        self.search_for_process()
-
-    def search_for_process(self):
-        list_processes = []
-        for p in psutil.process_iter(attrs=['name']):
-            if self.process_name in p.info['name']:
-                list_processes.append(p)
-        if len(list_processes) > 0:
-            self.process = list_processes[0]
+    def __init__(self, name=None, pid=None):
+        if pid:
+            self.process = psutil.Process(int(pid))
+        elif name:
+            ls = []
+            for p in psutil.process_iter(attrs=['name']):
+                if p.info['name'] == name:
+                    ls.append(p)
+            try:
+                if len(ls) > 1:
+                    print('multiple process have this name, please specify a pid instead')
+                    exit(1)
+                self.process = ls[0]
+            except IndexError:
+                print('Could not find process')
+                sys.exit(1)
         else:
-            print('Could not find process "' + self.process_name + '"')
+            print('Could not find process')
             sys.exit(1)
 
     @staticmethod
@@ -136,7 +140,7 @@ class Resources:
 
     @staticmethod
     def get_boot_time():
-        return format_hate(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%dT%H:%M:%S"))
+        return format_date(datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     @staticmethod
     def get_ram_total():
@@ -147,7 +151,7 @@ class Resources:
         return to_mb(psutil.swap_memory()[0])
 
     def get_process_create_time(self):
-        return format_hate(datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%dT%H:%M:%S"))
+        return format_date(datetime.datetime.fromtimestamp(self.process.create_time()).strftime("%Y-%m-%dT%H:%M:%S"))
 
     def get_process_read_count(self):
         return self.process.io_counters()[0]
