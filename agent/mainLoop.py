@@ -132,11 +132,12 @@ class MainLoop:
 
     def get_all_needed_logs(self):
         payload = {"logs": []}
-        for log in self.logs_to_get:
-            logs = self.log.get_logs(log)
-            if logs:
-                log_data = {"type": log, "messages": logs}
-                payload["logs"] += [log_data]
+        if self.logs_to_get:
+            for log in self.logs_to_get:
+                logs = self.log.get_logs(log)
+                if logs:
+                    log_data = {"type": log, "messages": logs}
+                    payload["logs"] += [log_data]
         if not payload["logs"]:
             return {}
         return payload

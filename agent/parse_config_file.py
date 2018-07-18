@@ -18,8 +18,11 @@ def get_file_path():
 
 def parse_config_file():
     path = get_file_path()
-    with open(path, 'r') as stream:
-        config = yaml.load(stream)
-        if not config:
-            config = []
-        return config
+    try:
+        with open(path, 'r') as stream:
+            config = yaml.load(stream)
+            if not config:
+                config = []
+            return config
+    except FileNotFoundError:
+        print("No config file found")
