@@ -8,10 +8,12 @@ install:
 
 script:
   - python -m pytest
+  - sh build.sh
 
 deploy:
-  provider: script
+  provider: releases
+  api_key: $GITUHB_OAUTH_TOKEN
+  file: "ia-agent"
   skip_cleanup: true
-  script: bash deploy.sh
   on:
-    branch: master
+    tags: true
