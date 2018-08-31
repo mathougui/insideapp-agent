@@ -22,9 +22,9 @@ class MainLoop:
     logs_to_get = parse_config_file()
     dynamic_resources_functions = {}
     static_resources_functions = {}
-    api_url = "http://backend.insideapp.io"
-    admin_url = "http://insideapp.io/api/v1/configuration"
-    logs_url = "http://insideapp.io:5000" + "/api/v1/logs"
+    api_url = "https://metrics.insideapp.io"
+    admin_url = "https://insideapp.io/api/v1/configuration"
+    logs_url = "https://logs.insideapp.io/api/v1/logs"
     dynamic_resources_url = api_url + "/api/v1/metrics/upload"
     static_resources_url = api_url + "/api/v1/metrics/static/upload"
 
