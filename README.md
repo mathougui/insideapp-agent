@@ -2,7 +2,7 @@
 Agent for insideapp
 
 ### Environment variables
-* `API_URL` (`http://insideapp.io:5000` by default)
+* `API_URL` (`https://metrics.insideapp.io` by default)
 * `ADMIN_URL` (`http://insideapp.io` by default)
 
 ### Generate executable
