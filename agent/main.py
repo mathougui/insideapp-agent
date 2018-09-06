@@ -72,6 +72,11 @@ def main():
     parser.add_argument('--stop', action="store_true")
     args = parser.parse_args()
 
+    # Check root privileges
+    if os.getuid() != 0:
+        print("Please launch the agent with root privileges")
+        exit(1)
+
     # Setup logger
     logger = setup_logger(args.verbose)
 
