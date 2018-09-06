@@ -2,24 +2,24 @@ import json
 import os
 import sys
 import time
-from threading import Thread
-
+import logging
 import psutil
 import requests
 from requests.auth import HTTPBasicAuth
-
+from threading import Thread
 from logs import Log
 from parse_config_file import parse_config_file
+
 from resources import Resources
 from config import resources
 
 
 class MainLoop:
+    logger = logging.getLogger("insideapp-agent")
     resources = None
     dynamic_resources_names = []
     static_resources_names = []
     resources_to_get = []
-    logs_to_get = parse_config_file()
     dynamic_resources_functions = {}
     static_resources_functions = {}
     api_url = "https://metrics.insideapp.io"
@@ -33,19 +33,22 @@ class MainLoop:
             self.resources_to_get += [resource_name]
 
     def read_config_file(self):
-            try:
-                self.dynamic_resources_names = resources["dynamic_resources"]
-                self.static_resources_names = resources["static_resources"]
-                for resource in self.dynamic_resources_names:
-                    self.dynamic_resources_functions[resource] = getattr(self.resources, "get_" + resource)
-                for resource in self.static_resources_names:
-                    self.static_resources_functions[resource] = getattr(self.resources, "get_" + resource)
-            except KeyError:
-                exit(1)
+        try:
+            self.dynamic_resources_names = resources["dynamic_resources"]
+            self.static_resources_names = resources["static_resources"]
+            for resource in self.dynamic_resources_names:
+                self.dynamic_resources_functions[resource] = getattr(
+                    self.resources, "get_" + resource)
+            for resource in self.static_resources_names:
+                self.static_resources_functions[resource] = getattr(
+                    self.resources, "get_" + resource)
+        except KeyError:
+            exit(1)
 
     def __init__(self, args):
         self.resources = Resources(name=args.name, pid=args.pid)
         self.read_config_file()
+        self.logs_to_get = parse_config_file()
         self.api_key = args.api_key
         self.log = Log(self.logs_to_get)
         self.fill_resources_to_get()
@@ -62,12 +65,12 @@ class MainLoop:
     def get_config(self):
         r = requests.get(self.admin_url, auth=HTTPBasicAuth("", self.api_key))
         if not r or not r.json():
-            print("Could not get configuration")
+            self.logger.warning("Could not get configuration")
             sys.exit(1)
         else:
             config = r.json()
             if self.verbose:
-                print("User configuration: " + str(config))
+                self.logger.debug("User configuration: " + str(config))
             self.resources_to_get = []
             for resource in config["resources"]:
                 self.resources_to_get += [resource]
@@ -94,10 +97,11 @@ class MainLoop:
                 except IndexError:
                     pass
         except psutil.NoSuchProcess:
-            print('Could not find process "' +
-                  self.resources.process + '"')
+            self.logger.error('Could not find process "' +
+                              self.resources.process + '"')
         if self.verbose:
-            print(self.static_resources_url + ":\n\t" + str(payload))
+            self.logger.info(self.static_resources_url +
+                             ":\n\t" + str(payload))
         self.make_request(payload, self.static_resources_url)
 
     def get_resources_and_logs(self):
@@ -122,8 +126,9 @@ class MainLoop:
                     except IndexError:
                         pass
         except psutil.NoSuchProcess:
-            print('Could not find process "' +
-                  self.resources.process + '"')
+            self.logger.error(
+                f"The process {self.resources.process.name} is no longer available")
+            exit(1)
         return payload
 
     def send_logs(self):
@@ -145,9 +150,10 @@ class MainLoop:
     def make_request(self, payload, url):
         payload["timestamp"] = round(time.time() * 1000)
         payload = json.dumps(payload)
-        if self.verbose:
-            print(url + ":\n\t" + payload)
+        self.logger.debug(url + ":\n\t" + payload)
         try:
-            requests.post(url, data=payload, auth=HTTPBasicAuth("", self.api_key))
+            requests.post(url, data=payload,
+                          auth=HTTPBasicAuth("", self.api_key))
         except Exception as e:
-            print(f"Could not connect to {url}: {e}", file=sys.stderr)
+            self.logger.error(
+                f"Could not connect to {url}: {e}")
