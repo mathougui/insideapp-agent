@@ -33,8 +33,11 @@ def setup_logger(verbose):
     logger = logging.getLogger("insideapp-agent")
     logger.setLevel(logging.DEBUG)
 
-    # Setup file logging
-    fh = logging.FileHandler('insideapp-agent.log')
+    # Setup file logging.
+    log_filename = '/var/log/insideapp/insideapp-agent.log'
+    if not os.path.exists(os.path.dirname(log_filename)):
+        os.makedirs(os.path.dirname(log_filename))
+    fh = logging.FileHandler(log_filename)
     fh.setLevel(logging.DEBUG)
     fhFormatter = logging.Formatter(
         '%(asctime)s - %(levelname)s - %(filename)s - Line: %(lineno)d - %(message)s')
