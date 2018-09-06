@@ -10,12 +10,12 @@ Agent for insideapp
 `./build.sh`
 
 Options:
-`-n, --name <process_name>`
-`-p, --pid <process_id>`
-`-v, --verbose`
-
-The agent will automatically create a daemon if not launched with the verbose mode
-To stop this daemon, run `python __main__.py stop`
+`--api_key` to specify the api key
+`-n, --name <process_name>` to specify the process name
+`-p, --pid <process_id>` to specify the process PID
+`-v, --verbose` to print debug statements
+`--start` to start the agent in daemon mode
+`--stop` to stop the agent if it was launched in daemon mode
 
 ### Config file
 To specify log files, you need to create a yaml file.
