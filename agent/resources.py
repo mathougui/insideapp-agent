@@ -1,7 +1,7 @@
 import datetime
 import sys
 import time
-
+import logging
 import psutil
 
 
@@ -21,10 +21,15 @@ def format_date(date):
 
 class Resources:
     process = None
+    logger = logging.getLogger("insideapp-agent")
 
     def __init__(self, name=None, pid=None):
         if pid:
-            self.process = psutil.Process(int(pid))
+            try:
+                self.process = psutil.Process(int(pid))
+            except psutil._exceptions.NoSuchProcess:
+                self.logger.error(f"Could not find a process with pid {pid}")
+                sys.exit(1)
         elif name:
             ls = []
             for p in psutil.process_iter(attrs=['name']):
@@ -32,14 +37,14 @@ class Resources:
                     ls.append(p)
             try:
                 if len(ls) > 1:
-                    print('multiple process have this name, please specify a pid instead')
+                    self.logger.error('multiple processes have this name, please specify a pid instead')
                     exit(1)
                 self.process = ls[0]
             except IndexError:
-                print('Could not find process')
+                self.logger.error(f'Could not find a process with name {name}')
                 sys.exit(1)
         else:
-            print('Could not find process')
+            self.logger.error('Could not find the process. Please provide a pid or a name')
             sys.exit(1)
 
     @staticmethod
