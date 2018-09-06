@@ -147,5 +147,7 @@ class MainLoop:
         payload = json.dumps(payload)
         if self.verbose:
             print(url + ":\n\t" + payload)
-        requests.post(url, data=payload,
-                      auth=HTTPBasicAuth("", self.api_key))
+        try:
+            requests.post(url, data=payload, auth=HTTPBasicAuth("", self.api_key))
+        except Exception as e:
+            print(f"Could not connect to {url}: {e}", file=sys.stderr)
