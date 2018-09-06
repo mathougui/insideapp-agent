@@ -17,6 +17,9 @@ Options:
 `--start` to start the agent in daemon mode
 `--stop` to stop the agent if it was launched in daemon mode
 
+### Log file
+The log file is situated at '/var/log/insideapp/insideapp-agent.log'
+
 ### Config file
 To specify log files, you need to create a yaml file.
 By default, the agent will look for '/etc/insideapp.yml'
