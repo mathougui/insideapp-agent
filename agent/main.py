@@ -35,14 +35,16 @@ def main():
     parser.add_argument('-p', '--pid', action="store")
     parser.add_argument('-n', '--name', action="store")
     parser.add_argument('api_key', action="store")
+    parser.add_argument('--start', action="store_true")
+    parser.add_argument('--stop', action="store_true")
     args = parser.parse_args()
 
-    if not args.verbose and platform.system() != "Windows":
+    if (args.start or args.stop) and platform.system() != "Windows":
         daemon = MyDaemon('insideapp_pid', args)
-        if sys.argv[1] == 'stop':
-            daemon.stop()
-        else:
+        if args.start:
             daemon.start()
+        else:
+            daemon.stop()
     else:
         launch_main_loop(args)
 
