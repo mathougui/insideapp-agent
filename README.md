@@ -14,8 +14,12 @@ Options:
 `-n, --name <process_name>` to specify the process name
 `-p, --pid <process_id>` to specify the process PID
 `-v, --verbose` to print debug statements
-`--start` to start the agent in daemon mode
-`--stop` to stop the agent if it was launched in daemon mode
+
+### Daemon
+To launch the agent in daemon mode, you must specify the start command as the first argument:
+    `sudo ia-agent start --api_key xxxxxxxxxxxxxxxxxxxxxxxxx`
+To stop the daemon, you must use the stop command:
+    `ia-agent stop`
 
 ### Log file
 The log file is situated at '/var/log/insideapp/insideapp-agent.log'
