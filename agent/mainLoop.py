@@ -94,7 +94,7 @@ class MainLoop:
                 try:
                     resource = self.static_resources_functions[r]()
                     payload[r] = resource
-                except IndexError:
+                except (IndexError, AttributeError):
                     pass
         except psutil.NoSuchProcess:
             self.logger.error('Could not find process "' +
@@ -106,8 +106,7 @@ class MainLoop:
 
     def get_resources_and_logs(self):
         while True:
-            if self.resources.process is not None:
-                self.send_resources()
+            self.send_resources()
             self.send_logs()
             time.sleep(5)
 
@@ -129,6 +128,16 @@ class MainLoop:
             self.logger.error(
                 f"The process {self.resources.process.name} is no longer available")
             exit(1)
+        except AttributeError:
+            # No process has been specified
+            for p in self.resources_to_get:
+                try:
+                    resource = self.dynamic_resources_functions[p]()
+                    payload[p] = resource
+                except IndexError:
+                    pass
+                except AttributeError:
+                    self.logger.error(f"{p}: To get this resource, you must specify a process to monitor")
         return payload
 
     def send_logs(self):

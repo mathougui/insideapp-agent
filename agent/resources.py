@@ -43,9 +43,6 @@ class Resources:
             except IndexError:
                 self.logger.error(f'Could not find a process with name {name}')
                 sys.exit(1)
-        else:
-            self.logger.error('Could not find the process. Please provide a pid or a name')
-            sys.exit(1)
 
     @staticmethod
     def get_cpu_time_user():
