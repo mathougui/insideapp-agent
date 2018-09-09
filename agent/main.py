@@ -62,14 +62,20 @@ def main():
     # Configure Signal Handler
     signal.signal(signal.SIGINT, signal_handler)
 
+    first_arg = sys.argv[1]
+    if (first_arg == "start" or first_arg == "stop") and platform.system() != "Windows":
+        del sys.argv[1]
+        if first_arg == "stop":
+            daemon = MyDaemon('insideapp_pid', [])
+            daemon.stop()
+            exit(0)
+
     # Configure ArgumentParser
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose', action="store_true")
     parser.add_argument('-p', '--pid', action="store")
     parser.add_argument('-n', '--name', action="store")
     parser.add_argument('--api_key', action="store")
-    parser.add_argument('--start', action="store_true")
-    parser.add_argument('--stop', action="store_true")
     args = parser.parse_args()
 
     # Check root privileges
@@ -84,13 +90,10 @@ def main():
         logger.error("You must provide an API key")
         exit(1)
 
-    if (args.start or args.stop) and platform.system() != "Windows":
+    if first_arg == "start" and platform.system() != "Windows":
         # Setup Daemon
         daemon = MyDaemon('insideapp_pid', args)
-        if args.start:
-            daemon.start()
-        else:
-            daemon.stop()
+        daemon.start()
     else:
         # Launch in foreground
         launch_main_loop(args)
