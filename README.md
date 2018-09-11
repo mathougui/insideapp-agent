@@ -10,10 +10,10 @@ Agent for insideapp
 `./build.sh`
 
 Options:  
-* `--api_key` to specify the api key  
-* `-n, --name <process_name>` to specify the process name  
-* `-p, --pid <process_id>` to specify the process PID  
-* `-v, --verbose` to print debug statements  
+* `--api_key` to specify the api key
+* `-n, --name <process_name>` to specify the process name
+* `-p, --pid <process_id>` to specify the process PID
+* `-v, --verbose` to print debug statements
 
 ### Daemon
 To launch the agent in daemon mode, you must specify the start command as the first argument:  `sudo ia-agent start --api_key xxxxxxxxxxxxxxxxxxxxxxxxx`  
