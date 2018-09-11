@@ -62,13 +62,17 @@ def main():
     # Configure Signal Handler
     signal.signal(signal.SIGINT, signal_handler)
 
-    first_arg = sys.argv[1]
+    first_arg = None
+    try:
+        first_arg = sys.argv[1]
+    except IndexError:
+        pass
     if (first_arg == "start" or first_arg == "stop") and platform.system() != "Windows":
         del sys.argv[1]
         if first_arg == "stop":
             daemon = MyDaemon('insideapp_pid', [])
             daemon.stop()
-            exit(0)
+            sys.exit(0)
 
     # Configure ArgumentParser
     parser = argparse.ArgumentParser()
@@ -81,14 +85,14 @@ def main():
     # Check root privileges
     if os.getuid() != 0:
         print("Please launch the agent with root privileges")
-        exit(1)
+        sys.exit(1)
 
     # Setup logger
     logger = setup_logger(args.verbose)
 
     if not args.api_key:
         logger.error("You must provide an API key")
-        exit(1)
+        sys.exit(1)
 
     if first_arg == "start" and platform.system() != "Windows":
         # Setup Daemon

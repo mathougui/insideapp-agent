@@ -43,7 +43,7 @@ class MainLoop:
                 self.static_resources_functions[resource] = getattr(
                     self.resources, "get_" + resource)
         except KeyError:
-            exit(1)
+            sys.exit(1)
 
     def __init__(self, args):
         self.resources = Resources(name=args.name, pid=args.pid)
@@ -127,7 +127,7 @@ class MainLoop:
         except psutil.NoSuchProcess:
             self.logger.error(
                 f"The process {self.resources.process.name} is no longer available")
-            exit(1)
+            sys.exit(1)
         except AttributeError:
             # No process has been specified
             for p in self.resources_to_get:
@@ -162,7 +162,7 @@ class MainLoop:
         self.logger.debug(url + ":\n\t" + payload)
         try:
             requests.post(url, data=payload,
-                          auth=HTTPBasicAuth("", self.api_key))
+                          auth=HTTPBasicAuth("", self.api_key), verify=False)
         except Exception as e:
             self.logger.error(
                 f"Could not connect to {url}: {e}")
