@@ -162,7 +162,7 @@ class MainLoop:
         self.logger.debug(url + ":\n\t" + payload)
         try:
             requests.post(url, data=payload,
-                          auth=HTTPBasicAuth("", self.api_key))
+                          auth=HTTPBasicAuth("", self.api_key), verify=False)
         except Exception as e:
             self.logger.error(
                 f"Could not connect to {url}: {e}")
