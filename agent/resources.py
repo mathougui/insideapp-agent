@@ -38,7 +38,7 @@ class Resources:
             try:
                 if len(ls) > 1:
                     self.logger.error('multiple processes have this name, please specify a pid instead')
-                    exit(1)
+                    sys.exit(1)
                 self.process = ls[0]
             except IndexError:
                 self.logger.error(f'Could not find a process with name {name}')
