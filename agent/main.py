@@ -29,7 +29,7 @@ def launch_main_loop(args):
     main_loop.launch_main_loop()
 
 
-def setup_logger(verbose):
+def setup_logger(verbose=False):
     logger = logging.getLogger("insideapp-agent")
     logger.setLevel(logging.DEBUG)
 
@@ -58,48 +58,64 @@ def setup_logger(verbose):
     return logger
 
 
+def check_api_key(args, logger):
+    if not args.api_key:
+        logger.error("You must provide an API key")
+        sys.exit(1)
+
+
+def add_optional_arguments_to_parser(parser):
+    parser.add_argument('-v', '--verbose', action="store_true", help="Enable verbose logs (What ressources are sent to the server, etc)")
+    parser.add_argument('-p', '--pid', action="store", help="Specify the pid of the process to monitor")
+    parser.add_argument('-n', '--name', action="store", help="Specify the name of the process to monitor")
+    parser.add_argument('--api_key', action="store", help='Specify the api key for your application (you can find it at "https://insideapp.io/apps/<your_app>/settings")')
+
+
 def main():
     # Configure Signal Handler
     signal.signal(signal.SIGINT, signal_handler)
 
-    first_arg = None
-    try:
-        first_arg = sys.argv[1]
-    except IndexError:
-        pass
-    if (first_arg == "start" or first_arg == "stop") and platform.system() != "Windows":
-        del sys.argv[1]
-        if first_arg == "stop":
-            daemon = MyDaemon('insideapp_pid', [])
-            daemon.stop()
-            sys.exit(0)
-
     # Configure ArgumentParser
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--verbose', action="store_true")
-    parser.add_argument('-p', '--pid', action="store")
-    parser.add_argument('-n', '--name', action="store")
-    parser.add_argument('--api_key', action="store")
+
+    subparser = parser.add_subparsers(dest="command")
+
+    start_parser = subparser.add_parser("start", help="Start the agent in foreground mode")
+    add_optional_arguments_to_parser(start_parser)
+
+    daemon_parser = subparser.add_parser("daemon", help="Access the daemon commands (start and stop)")
+    daemon_subparser = daemon_parser.add_subparsers(dest="daemon")
+
+    daemon_start_parser = daemon_subparser.add_parser("start", help="Start the agent in daemon mode")
+    add_optional_arguments_to_parser(daemon_start_parser)
+
+    daemon_subparser.add_parser("stop", help="Stop the agent if it was ran in daemon mode")
+
     args = parser.parse_args()
+
+    # Setup logger
+    try:
+        logger = setup_logger(args.verbose)
+    except AttributeError:
+        # Args.verbose is not defined (because the program was launched with the daemon stop command, etc...)
+        logger = setup_logger()
 
     # Check root privileges
     if os.getuid() != 0:
         print("Please launch the agent with root privileges")
         sys.exit(1)
 
-    # Setup logger
-    logger = setup_logger(args.verbose)
-
-    if not args.api_key:
-        logger.error("You must provide an API key")
-        sys.exit(1)
-
-    if first_arg == "start" and platform.system() != "Windows":
+    if args.command == "daemon" and platform.system() != "Windows":
         # Setup Daemon
         daemon = MyDaemon('insideapp_pid', args)
-        daemon.start()
+        if args.daemon == "start":
+            check_api_key(args, logger)
+            daemon.start()
+        elif args.daemon == "stop":
+            daemon.stop()
     else:
         # Launch in foreground
+        check_api_key(args, logger)
         launch_main_loop(args)
 
 
