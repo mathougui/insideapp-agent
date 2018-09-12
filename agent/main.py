@@ -93,17 +93,17 @@ def main():
 
     args = parser.parse_args()
 
+    # Check root privileges
+    if os.getuid() != 0:
+        print("Please launch the agent with root privileges")
+        sys.exit(1)
+
     # Setup logger
     try:
         logger = setup_logger(args.verbose)
     except AttributeError:
         # Args.verbose is not defined (because the program was launched with the daemon stop command, etc...)
         logger = setup_logger()
-
-    # Check root privileges
-    if os.getuid() != 0:
-        print("Please launch the agent with root privileges")
-        sys.exit(1)
 
     if args.command == "daemon" and platform.system() != "Windows":
         # Setup Daemon
