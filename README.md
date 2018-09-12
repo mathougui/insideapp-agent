@@ -38,3 +38,11 @@ The file should look like this:
 nginx: /var/log/nginx/error.log.4
 nginx2: /var/log/nginx/error.log
 ```
+### Troubleshoot
+```
+Fatal Python error: initfsencoding: unable to load the file system codec
+zipimport.ZipImportError: can't find module 'encodings'
+```
+This error appears because you tried to build the agent using python 3.7.
+You must build it using python 3.6.  
+To create a virtualenv using python 3.6, use `virtualenv venv --python=/bin/python3.6`
