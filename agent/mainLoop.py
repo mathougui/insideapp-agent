@@ -4,6 +4,7 @@ import sys
 import time
 import logging
 import psutil
+import urllib3
 import requests
 from requests.auth import HTTPBasicAuth
 from threading import Thread
@@ -46,6 +47,7 @@ class MainLoop:
             sys.exit(1)
 
     def __init__(self, args):
+        urllib3.disable_warnings()
         self.resources = Resources(name=args.name, pid=args.pid)
         self.read_config_file()
         self.logs_to_get = parse_config_file()
