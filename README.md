@@ -6,7 +6,6 @@ Agent for insideapp
 * `ADMIN_URL` (`http://insideapp.io` by default)
 
 ### Generate executable
-
 `./build.sh`
 
 ### Launch the agent
