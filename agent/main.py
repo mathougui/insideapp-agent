@@ -5,7 +5,7 @@ import sys
 import platform
 import logging
 
-from daemon import Daemon
+from my_daemon import Daemon
 from mainLoop import MainLoop
 
 

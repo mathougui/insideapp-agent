@@ -72,3 +72,6 @@ class Network():
 
     def send_dynamic_resources(self, payload):
         self.make_request(payload, self.get_dynamic_resources_url())
+    
+    def send_logs(self, payload):
+        self.make_request(payload, self.logs_url)

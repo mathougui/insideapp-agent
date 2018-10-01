@@ -40,7 +40,7 @@ class ProcessList:
 
     def loop_get_resources_configuration(self):
         while True:
-            self.resources_to_get, self.logs_to_get = self.network.get_resources_configuration()
+            self.resources_to_get, _ = self.network.get_resources_configuration()
             time.sleep(30)
 
     def create_resources_methods_name_dict(self):
