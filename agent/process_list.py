@@ -36,12 +36,9 @@ class ProcessList:
 
         self.create_resources_methods_name_dict()
 
-        Thread(target=self.loop_get_resources_configuration).start()
-
-    def loop_get_resources_configuration(self):
-        while True:
-            self.resources_to_get, _ = self.network.get_resources_configuration()
-            time.sleep(30)
+    def get_resources_configuration(self):
+        self.logger.debug("tata")
+        self.resources_to_get = self.network.get_resources_configuration()
 
     def create_resources_methods_name_dict(self):
         try:

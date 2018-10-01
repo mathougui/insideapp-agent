@@ -40,8 +40,7 @@ class Network():
 
     def get_resources_configuration(self):
         resources_to_get = []
-        logs_to_get = {}
-
+        self.logger.debug("toto")
         r = requests.get(self.admin_url, auth=HTTPBasicAuth("", self.api_key))
         if not r or not r.json():
             self.logger.warning(
@@ -52,9 +51,7 @@ class Network():
             self.logger.debug("User configuration: " + str(config))
             for resource in config["resources"]:
                 resources_to_get += [resource]
-            for log in config["logs"]:
-                logs_to_get[log["type"]] = log["path"]
-        return resources_to_get, logs_to_get
+        return resources_to_get
 
     def make_request(self, payload, url):
         payload["timestamp"] = round(time.time() * 1000)

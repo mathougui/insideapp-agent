@@ -9,8 +9,10 @@ import requests
 from requests.auth import HTTPBasicAuth
 from threading import Thread
 from logs import Log
+import threading
 
 from process_list import ProcessList
+from network import Network
 
 
 class MainLoop:
@@ -19,12 +21,14 @@ class MainLoop:
     def __init__(self, args):
         self.process_list = ProcessList(args.name, args.pid, args.api_key)
         self.logs = Log(args.api_key)
+        self.network = Network(args.api_key)
 
     def launch_main_loop(self):
         self.get_resources_and_logs()
 
     def get_resources_and_logs(self):
         while True:
+            self.process_list.get_resources_configuration()
             self.process_list.send_dynamic_resources_all_processes()
             self.logs.send_logs()
             time.sleep(5)
