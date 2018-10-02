@@ -85,6 +85,6 @@ class ProcessList:
                         pass
         except psutil.NoSuchProcess:
             self.logger.error(
-                f"The process {self.resources.process.name} is no longer available")
+                f"The process {process.name} is no longer available")
             sys.exit(1)
         return payload
