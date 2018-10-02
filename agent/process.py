@@ -1,8 +1,8 @@
-import datetime
-import sys
-import time
 import logging
 import psutil
+import sys
+import time
+import datetime
 
 
 def to_mb(nb_bytes):
@@ -19,30 +19,44 @@ def format_date(date):
     return tz
 
 
-class Resources:
+class Process:
     process = None
-    logger = logging.getLogger("insideapp-agent")
 
-    def __init__(self, name=None, pid=None):
-        if pid:
-            try:
-                self.process = psutil.Process(int(pid))
-            except psutil._exceptions.NoSuchProcess:
-                self.logger.error(f"Could not find a process with pid {pid}")
-                sys.exit(1)
-        elif name:
-            ls = []
-            for p in psutil.process_iter(attrs=['name']):
-                if p.info['name'] == name:
-                    ls.append(p)
-            try:
-                if len(ls) > 1:
-                    self.logger.error('multiple processes have this name, please specify a pid instead')
-                    sys.exit(1)
-                self.process = ls[0]
-            except IndexError:
-                self.logger.error(f'Could not find a process with name {name}')
-                sys.exit(1)
+    def __init__(self, process):
+        self.process = process
+
+    @staticmethod
+    def create_name_resource(resource_name):
+        logger = logging.getLogger("insideapp-agent")
+        possible_processes = []
+        # Get all the processes with the specified name
+        for p in psutil.process_iter(attrs=['name']):
+            if p.info['name'] == resource_name:
+                possible_processes.append(p)
+        # If no process with this name was found, exit
+        if len(possible_processes) == 0:
+            logger.error(
+                f'Could not find a process with name {resource_name}')
+            sys.exit(1)
+        # If more than one process with this name was found, exit
+        if len(possible_processes) > 1:
+            logger.error(
+                'Multiple processes have this name, please specify a pid instead')
+            sys.exit(1)
+        return Process(possible_processes[0])
+
+    @staticmethod
+    def create_pid_resource(resource_pid):
+        logger = logging.getLogger("insideapp-agent")
+        try:
+            return Process(psutil.Process(int(resource_pid)))
+        except psutil._exceptions.NoSuchProcess:
+            logger.error(
+                f"Could not find a process with pid {resource_pid}")
+            sys.exit(1)
+        except ValueError:
+            logger.error(f"PID {resource_pid} must be an integer")
+            sys.exit(1)
 
     @staticmethod
     def get_cpu_time_user():
