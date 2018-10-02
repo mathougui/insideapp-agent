@@ -37,7 +37,6 @@ class ProcessList:
         self.create_resources_methods_name_dict()
 
     def get_resources_configuration(self):
-        self.logger.debug("tata")
         self.resources_to_get = self.network.get_resources_configuration()
 
     def create_resources_methods_name_dict(self):

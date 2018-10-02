@@ -28,8 +28,6 @@ class Network():
         self.api_key = api_key
         self.get_env_variables()
 
-        urllib3.disable_warnings()
-
     def get_env_variables(self):
         if "METRICS_URL" in os.environ:
             self.metrics_url = os.environ["METRICS_URL"]
@@ -38,10 +36,12 @@ class Network():
         if "ADMIN_URL" in os.environ:
             self.admin_url = os.environ["ADMIN_URL"] + "/api/v1/configuration"
 
+        urllib3.disable_warnings()
+
     def get_resources_configuration(self):
         resources_to_get = []
-        self.logger.debug("toto")
-        r = requests.get(self.admin_url, auth=HTTPBasicAuth("", self.api_key))
+        r = requests.get(self.admin_url, auth=HTTPBasicAuth(
+            "", self.api_key), verify=False)
         if not r or not r.json():
             self.logger.warning(
                 f'Could not get configuration from {self.admin_url}, please try again later')
@@ -69,6 +69,6 @@ class Network():
 
     def send_dynamic_resources(self, payload):
         self.make_request(payload, self.get_dynamic_resources_url())
-    
+
     def send_logs(self, payload):
         self.make_request(payload, self.logs_url)

@@ -18,7 +18,7 @@ class Daemon(object):
     def __init__(self, pidfile, stdin=os.devnull,
                  stdout=os.devnull, stderr=os.devnull,
                  home_dir='.', umask=0o22, verbose=1,
-                 use_gevent=True, use_eventlet=True):
+                 use_gevent=False, use_eventlet=False):
         self.stdin = stdin
         self.stdout = stdout
         self.stderr = stderr
