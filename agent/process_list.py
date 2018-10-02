@@ -7,7 +7,6 @@ import psutil
 from process import Process
 from config import resources
 from network import Network
-from threading import Thread
 
 
 class ProcessList:
