@@ -3,7 +3,7 @@ import unittest
 from agent import process_list
 
 class ResourceTest(unittest.TestCase):
-    process_list = process_list.ProcessList(processes_name=["python3.6"], processes_pid=None, api_key="")
+    process_list = process_list.ProcessList(processes_name=["python"], processes_pid=None, api_key="")
 
     def test_cpu_time_user(self):
         self.assertGreater(self.process_list.processes[0].get_cpu_time_user(), 0)
