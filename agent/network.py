@@ -27,6 +27,7 @@ class Network():
     def __init__(self, api_key):
         self.api_key = api_key
         self.get_env_variables()
+        urllib3.disable_warnings()
 
     def get_env_variables(self):
         if "METRICS_URL" in os.environ:
@@ -35,8 +36,6 @@ class Network():
             self.logs_url = os.environ["LOGS_URL"]
         if "ADMIN_URL" in os.environ:
             self.admin_url = os.environ["ADMIN_URL"] + "/api/v1/configuration"
-
-        urllib3.disable_warnings()
 
     def get_resources_configuration(self):
         resources_to_get = []
