@@ -9,6 +9,7 @@ from config import resources
 from network import Network
 import my_daemon
 
+
 class ProcessList:
     processes = []
     static_resources_names = []
@@ -35,6 +36,9 @@ class ProcessList:
 
         my_daemon.MyDaemon.set_status(self.processes, api_key=api_key)
 
+        if len(self.processes) == 0:
+            self.processes.append(Process(None))
+
         self.create_resources_methods_name_dict()
 
     def get_resources_configuration(self):
@@ -53,6 +57,8 @@ class ProcessList:
                     self.processes[0], "get_" + resource)
         except KeyError:
             sys.exit(1)
+        except IndexError:
+            pass
 
     def send_static_resources(self):
         payload = {}
@@ -81,12 +87,24 @@ class ProcessList:
             with process.process.oneshot():
                 for p in self.resources_to_get:
                     try:
-                        resource = self.dynamic_resources_functions[p]()
-                        payload[p] = resource
+                        r = self.dynamic_resources_functions[p]()
+                        payload[p] = r
                     except IndexError:
                         pass
         except psutil.NoSuchProcess:
             self.logger.error(
                 f"The process {process.name} is no longer available")
             sys.exit(1)
+        except AttributeError:
+            # No process has been specified
+            print("toto")
+            for resource in self.resources_to_get:
+                try:
+                    r = self.dynamic_resources_functions[resource]()
+                    payload[resource] = r
+                except IndexError:
+                    pass
+                except AttributeError:
+                    self.logger.error(
+                        f'{resource}: to monitor this resource, you must specify a process to monitor')
         return payload
