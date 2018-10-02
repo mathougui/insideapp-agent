@@ -58,8 +58,6 @@ def main():
     # Setup logger
     logger = create_logger(args)
 
-    logger.debug("test")
-
     # Get and send logs and resources to the server every few seconds
     launch_main_loop(args, logger)
 
