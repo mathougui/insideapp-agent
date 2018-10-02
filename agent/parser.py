@@ -20,6 +20,10 @@ def parse_arguments():
     daemon_subparser.add_parser(
         "stop", help="Stop the agent if it was ran in daemon mode")
 
+    daemon_subparser.add_parser(
+        "status", help="Show the current configuration of the agent"
+    )
+
     return parser.parse_args()
 
 

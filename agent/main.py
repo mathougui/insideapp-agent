@@ -39,6 +39,9 @@ def launch_main_loop(args, logger):
             daemon.start()
         elif args.daemon == "stop":
             daemon.stop()
+            daemon.remove_config_file()
+        elif args.daemon == "status":
+            daemon.status()
     else:
         # Launch in foreground
         check_api_key(args, logger)
