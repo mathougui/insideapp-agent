@@ -56,7 +56,7 @@ def main():
     check_root_privileges()
 
     # Setup logger
-    logger = create_logger(args.verbose)
+    logger = create_logger(args)
 
     logger.debug("test")
 

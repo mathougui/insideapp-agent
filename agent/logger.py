@@ -1,15 +1,15 @@
 import logging
 import os
 
-def create_logger(verbose):
+def create_logger(args):
     try:
-        logger = setup_logger(verbose)
+        logger = setup_logger(args.verbose)
     except AttributeError:
         # Args.verbose is not defined (because the program was launched with the daemon stop command, etc...)
-        logger = setup_logger()
+        logger = setup_logger(False)
     return logger
 
-def setup_logger(verbose=False):
+def setup_logger(verbose):
     logger = logging.getLogger("insideapp-agent")
     logger.setLevel(logging.DEBUG)
 
