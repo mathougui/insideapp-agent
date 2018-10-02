@@ -7,7 +7,7 @@ import psutil
 from process import Process
 from config import resources
 from network import Network
-
+import my_daemon
 
 class ProcessList:
     processes = []
@@ -32,6 +32,8 @@ class ProcessList:
             for resource_pid in processes_pid:
                 self.processes.append(
                     Process.create_pid_resource(resource_pid))
+
+        my_daemon.MyDaemon.set_status(self.processes, api_key=api_key)
 
         self.create_resources_methods_name_dict()
 

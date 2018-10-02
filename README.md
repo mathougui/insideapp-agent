@@ -11,17 +11,16 @@ Agent for insideapp
 ### Launch the agent
 To launch the agent, you must use the `start` command: `sudo ia-agent start --api_key xxxxxxxxxxxxxxxxxxxxxxxxx`
 
-### Daemon
-To launch the agent in daemon mode, you must specify the `daemon start` command: `sudo ia-agent daemon start --api_key xxxxxxxxxxxxxxxxxxxxxxxxx`  
-To stop the daemon, you must use the `daemon stop` command:  `ia-agent daemon stop`  
+### Verbose mode
+To launch the agent in verbose mode (Foreground), use the `-v` or `--verbose` option
 
 ### Options  
 * `--api_key` to specify the api key
 * `-n, --name <process_name>` to specify the process name
 * `-p, --pid <process_id>` to specify the process PID
-* `-v, --verbose` to print debug statements
+* `-v, --verbose` to launch the agent in foreground mode
 
-The only mandatory argument when using the `start` or `daemon start` command is `--api_key`.  
+The only mandatory argument when using the `start` command is `--api_key`.  
 If you do not specify a process with either the `-n` or `-p` options, then the agent will only send the global metrics not related to any process, e.g. the global CPU percentage usage.
 
 ### Log file
