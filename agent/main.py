@@ -31,17 +31,16 @@ def check_root_privileges():
 
 
 def launch_main_loop(args, logger):
-    if args.command == "daemon" and platform.system() != "Windows":
+    daemon = MyDaemon('insideapp_pid', args)
+    if args.command == "stop":
+        daemon.stop()
+        daemon.remove_config_file()
+    elif args.command == "status":
+        daemon.status()
+    elif not args.verbose and platform.system() != "Windows" and args.command == "start":
         # Setup Daemon
-        daemon = MyDaemon('insideapp_pid', args)
-        if args.daemon == "start":
-            check_api_key(args, logger)
-            daemon.start()
-        elif args.daemon == "stop":
-            daemon.stop()
-            daemon.remove_config_file()
-        elif args.daemon == "status":
-            daemon.status()
+        check_api_key(args, logger)
+        daemon.start()
     else:
         # Launch in foreground
         check_api_key(args, logger)

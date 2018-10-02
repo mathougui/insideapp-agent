@@ -9,18 +9,10 @@ def parse_arguments():
         "start", help="Start the agent in foreground mode")
     add_optional_arguments_to_parser(start_parser)
 
-    daemon_parser = subparser.add_parser(
-        "daemon", help="Access the daemon commands (start and stop)")
-    daemon_subparser = daemon_parser.add_subparsers(dest="daemon")
-
-    daemon_start_parser = daemon_subparser.add_parser(
-        "start", help="Start the agent in daemon mode")
-    add_optional_arguments_to_parser(daemon_start_parser)
-
-    daemon_subparser.add_parser(
+    subparser.add_parser(
         "stop", help="Stop the agent if it was ran in daemon mode")
 
-    daemon_subparser.add_parser(
+    subparser.add_parser(
         "status", help="Show the current configuration of the agent"
     )
 
