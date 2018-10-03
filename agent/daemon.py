@@ -82,10 +82,9 @@ class Daemon(object):
                     # Python 3 can't have unbuffered text I/O
                     se = open(self.stderr, 'a+', 1)
             else:
-                se = so
+                se = sys.stderr
             os.dup2(si.fileno(), sys.stdin.fileno())
             os.dup2(so.fileno(), sys.stdout.fileno())
-            os.dup2(se.fileno(), sys.stderr.fileno())
 
         def sigtermhandler(signum, frame):
             self.daemon_alive = False
