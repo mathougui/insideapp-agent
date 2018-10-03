@@ -50,7 +50,8 @@ class MyDaemon(Daemon):
         except FileNotFoundError:
             logger.warning("No daemon configuration file found")
 
-    def update_processes(self, processes_name, processes_pid):
+    @staticmethod
+    def update_processes(processes_name, processes_pid):
         processes = []
         if processes_name:
             for process_name in processes_name:
@@ -75,3 +76,16 @@ class MyDaemon(Daemon):
                 yaml.dump(new_config, stream)
         except FileNotFoundError:
             logger.warning("No daemon configuration file found")
+
+    @staticmethod
+    def get_processes():
+        pids = []
+        try:
+            with open(filename, 'r') as stream:
+                config = yaml.load(stream)
+                for value in config.values():
+                    if str(value).isdigit():
+                        pids.append(value)
+        except IOError:
+            logger.warning(f"Could not check if processes were updated: file {filename} was not found")
+        return pids

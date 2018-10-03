@@ -96,7 +96,6 @@ class ProcessList:
             sys.exit(1)
         except AttributeError:
             # No process has been specified
-            print("toto")
             for resource in self.resources_to_get:
                 try:
                     r = self.dynamic_resources_functions[resource]()
@@ -107,3 +106,8 @@ class ProcessList:
                     self.logger.error(
                         f'{resource}: to monitor this resource, you must specify a process to monitor')
         return payload
+
+    def update_processes(self, pids):
+        self.processes = []
+        for pid in pids:
+            self.processes.append(Process.create_pid_resource(pid))
