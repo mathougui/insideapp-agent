@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 def create_logger(args):
     try:
         logger = setup_logger(args.verbose)
@@ -8,6 +9,7 @@ def create_logger(args):
         # Args.verbose is not defined (because the program was launched with the daemon stop command, etc...)
         logger = setup_logger(False)
     return logger
+
 
 def setup_logger(verbose):
     logger = logging.getLogger("insideapp-agent")

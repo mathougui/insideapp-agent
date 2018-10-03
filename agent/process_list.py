@@ -1,13 +1,12 @@
-import datetime
-import sys
-import time
 import logging
+import sys
+
 import psutil
 
-from process import Process
+import my_daemon
 from config import resources
 from network import Network
-import my_daemon
+from process import Process
 
 
 class ProcessList:

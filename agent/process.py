@@ -1,8 +1,9 @@
+import datetime
 import logging
-import psutil
 import sys
 import time
-import datetime
+
+import psutil
 
 
 def to_mb(nb_bytes):

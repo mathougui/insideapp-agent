@@ -1,8 +1,7 @@
 import time
-import logging
 
-from process_list import ProcessList
 from logs import Log
+from process_list import ProcessList
 
 
 def main_loop(args):

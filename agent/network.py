@@ -1,15 +1,15 @@
-import urllib3
-import requests
-import sys
+import json
 import logging
 import os
+import sys
 import time
-import json
 
+import requests
+import urllib3
 from requests.auth import HTTPBasicAuth
 
 
-class Network():
+class Network:
     api_key = None
 
     logger = logging.getLogger("insideapp-agent")

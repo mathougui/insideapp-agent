@@ -1,11 +1,11 @@
-import os
-import yaml
 import logging
-
+import os
 from os.path import expanduser
 
+import yaml
+
+import main_loop
 from daemon import Daemon
-from main_loop import main_loop
 
 logger = logging.getLogger("insideapp-agent")
 filename = f'{expanduser("~")}/.insideapp/insideapp.yml'
@@ -18,9 +18,10 @@ class MyDaemon(Daemon):
         self.args = args
 
     def run(self):
-        main_loop(self.args)
+        main_loop.main_loop(self.args)
 
-    def status(self):
+    @staticmethod
+    def status():
         try:
             with open(filename, 'r') as stream:
                 config = yaml.load(stream)
@@ -30,7 +31,8 @@ class MyDaemon(Daemon):
         except FileNotFoundError:
             logger.warning("No daemon configuration file found")
 
-    def remove_config_file(self):
+    @staticmethod
+    def remove_config_file():
         os.remove(filename)
 
     @staticmethod
