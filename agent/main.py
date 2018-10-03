@@ -34,6 +34,8 @@ def launch_main_loop(args, logger):
         MyDaemon.remove_config_file()
     elif args.command == "status":
         daemon.status()
+    elif args.command == "update":
+        daemon.update_processes(args.name, args.pid)
     elif not args.verbose and platform.system() != "Windows" and args.command == "start":
         # Setup Daemon
         check_api_key(args, logger)
