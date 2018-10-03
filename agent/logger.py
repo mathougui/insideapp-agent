@@ -29,7 +29,7 @@ def setup_logger(verbose):
     if verbose:
         ch.setLevel(logging.DEBUG)
     else:
-        ch.setLevel(logging.WARNING)
+        ch.setLevel(logging.ERROR)
     chFormatter = logging.Formatter(
         '%(levelname)s - %(message)s')
     ch.setFormatter(chFormatter)

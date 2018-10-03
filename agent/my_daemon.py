@@ -28,7 +28,8 @@ class MyDaemon(Daemon):
                     config = {}
                 print(config)
         except FileNotFoundError:
-            logger.warning("No daemon configuration file found")
+            logger.error("No daemon configuration file found")
+            exit(1)
 
     def remove_config_file(self):
         os.remove(filename)
@@ -48,4 +49,4 @@ class MyDaemon(Daemon):
                     config[process.process.name()] = process.process.ppid()
                 yaml.dump(config, stream)
         except FileNotFoundError:
-            logger.warning("No daemon configuration file found")
+            logger.warning("Could not create the daemon configuration file")

@@ -42,8 +42,8 @@ class Network():
         r = requests.get(self.admin_url, auth=HTTPBasicAuth(
             "", self.api_key), verify=False)
         if not r or not r.json():
-            self.logger.warning(
-                f'Could not get configuration from {self.admin_url}, please try again later')
+            self.logger.error(
+                f'Could not get configuration from {self.admin_url}, please check your api key')
             sys.exit(1)
         else:
             config = r.json()
