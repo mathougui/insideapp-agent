@@ -1,18 +1,15 @@
-import argparse
 import os
+import platform
 import signal
 import sys
-import platform
-import logging
-import time
 
 import parser
-
-from my_daemon import MyDaemon
 from logger import create_logger
 from main_loop import main_loop
+from my_daemon import MyDaemon
 
 
+# noinspection PyUnusedLocal
 def signal_handler(sig, frame):
     os.kill(os.getpid(), signal.SIGINT)
     sys.exit(0)
@@ -34,9 +31,11 @@ def launch_main_loop(args, logger):
     daemon = MyDaemon('insideapp_pid', args)
     if args.command == "stop":
         daemon.stop()
-        daemon.remove_config_file()
+        MyDaemon.remove_config_file()
     elif args.command == "status":
         daemon.status()
+    elif args.command == "update":
+        daemon.update_processes(args.name, args.pid)
     elif not args.verbose and platform.system() != "Windows" and args.command == "start":
         # Setup Daemon
         check_api_key(args, logger)

@@ -1,10 +1,12 @@
+import logging
 import os
 import re
+
 import yaml
-import logging
 
 CONFIG_FILE_ENV_VARIABLE = 'INSIDEAPP_CONFIG'
 logger = logging.getLogger("insideapp-agent")
+
 
 def get_file_path():
     path = '/etc/insideapp.yml'

@@ -1,5 +1,6 @@
 import argparse
 
+
 def parse_arguments():
     parser = argparse.ArgumentParser()
 
@@ -15,6 +16,14 @@ def parse_arguments():
     subparser.add_parser(
         "status", help="Show the current configuration of the agent"
     )
+
+    update_parser = subparser.add_parser(
+        "update", help="Update the processes to monitor"
+    )
+    update_parser.add_argument('-p', '--pid', action="store",
+                               help="Specify the pid of the process to monitor", nargs='+')
+    update_parser.add_argument('-n', '--name', action="store",
+                               help="Specify the name of the process to monitor", nargs='+')
 
     return parser.parse_args()
 

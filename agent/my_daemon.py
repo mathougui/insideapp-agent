@@ -1,11 +1,12 @@
-import os
-import yaml
 import logging
-
+import os
 from os.path import expanduser
 
+import yaml
+
+import main_loop
 from daemon import Daemon
-from main_loop import main_loop
+from process import Process
 
 logger = logging.getLogger("insideapp-agent")
 filename = f'{expanduser("~")}/.insideapp/insideapp.yml'
@@ -18,9 +19,10 @@ class MyDaemon(Daemon):
         self.args = args
 
     def run(self):
-        main_loop(self.args)
+        main_loop.main_loop(self.args)
 
-    def status(self):
+    @staticmethod
+    def status():
         try:
             with open(filename, 'r') as stream:
                 config = yaml.load(stream)
@@ -30,7 +32,8 @@ class MyDaemon(Daemon):
         except FileNotFoundError:
             logger.warning("No daemon configuration file found")
 
-    def remove_config_file(self):
+    @staticmethod
+    def remove_config_file():
         os.remove(filename)
 
     @staticmethod
@@ -39,13 +42,46 @@ class MyDaemon(Daemon):
             os.makedirs(os.path.dirname(filename))
         try:
             with open(filename, 'w+') as stream:
-                config = yaml.load(stream)
-                if not config:
-                    config = {}
-                    if api_key:
-                        config['api_key'] = api_key
+                stream.truncate(0)
+                config = {'api_key': api_key}
                 for process in processes:
                     config[process.process.name()] = process.process.ppid()
                 yaml.dump(config, stream)
         except FileNotFoundError:
             logger.warning("No daemon configuration file found")
+
+    @staticmethod
+    def update_processes(processes_name, processes_pid):
+        processes = []
+        if processes_name:
+            processes += [Process.create_name_resource(process_name) for process_name in processes_name]
+        if processes_pid:
+            processes += [Process.create_pid_resource(resource_pid) for resource_pid in processes_pid]
+        try:
+            with open(filename, 'r+') as stream:
+                config = yaml.load(stream)
+            os.remove(filename)
+            with open(filename, 'w+') as stream:
+                new_config = {}
+                try:
+                    new_config = {'api_key': config['api_key']}
+                except AttributeError:
+                    pass
+                for process in processes:
+                    new_config[process.process.name()] = process.process.ppid()
+                yaml.dump(new_config, stream)
+        except FileNotFoundError:
+            logger.warning("No daemon configuration file found")
+
+    @staticmethod
+    def get_processes():
+        pids = []
+        try:
+            with open(filename, 'r') as stream:
+                config = yaml.load(stream)
+                for value in config.values():
+                    if str(value).isdigit():
+                        pids.append(value)
+        except IOError:
+            logger.warning(f"Could not check if processes were updated: file {filename} was not found")
+        return pids

@@ -1,13 +1,12 @@
-import datetime
-import sys
-import time
 import logging
+import sys
+
 import psutil
 
-from process import Process
+import my_daemon
 from config import resources
 from network import Network
-import my_daemon
+from process import Process
 
 
 class ProcessList:
@@ -97,7 +96,6 @@ class ProcessList:
             sys.exit(1)
         except AttributeError:
             # No process has been specified
-            print("toto")
             for resource in self.resources_to_get:
                 try:
                     r = self.dynamic_resources_functions[resource]()
@@ -108,3 +106,6 @@ class ProcessList:
                     self.logger.error(
                         f'{resource}: to monitor this resource, you must specify a process to monitor')
         return payload
+
+    def update_processes(self, pids):
+        self.processes = [Process.create_pid_resource(pid) for pid in pids]
