@@ -108,6 +108,4 @@ class ProcessList:
         return payload
 
     def update_processes(self, pids):
-        self.processes = []
-        for pid in pids:
-            self.processes.append(Process.create_pid_resource(pid))
+        self.processes = [Process.create_pid_resource(pid) for pid in pids]

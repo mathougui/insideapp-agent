@@ -54,13 +54,9 @@ class MyDaemon(Daemon):
     def update_processes(processes_name, processes_pid):
         processes = []
         if processes_name:
-            for process_name in processes_name:
-                processes.append(
-                    Process.create_name_resource(process_name))
+            processes += [Process.create_name_resource(process_name) for process_name in processes_name]
         if processes_pid:
-            for resource_pid in processes_pid:
-                processes.append(
-                    Process.create_pid_resource(resource_pid))
+            processes += [Process.create_pid_resource(resource_pid) for resource_pid in processes_pid]
         try:
             with open(filename, 'r+') as stream:
                 config = yaml.load(stream)
