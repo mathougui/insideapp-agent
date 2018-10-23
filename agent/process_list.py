@@ -102,7 +102,7 @@ class ProcessList:
                 try:
                     r = self.dynamic_resources_functions[resource]()
                     payload[resource] = r
-                except IndexError:
+                except (IndexError, TypeError):
                     pass
                 except AttributeError:
                     self.logger.error(
