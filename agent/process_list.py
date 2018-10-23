@@ -76,6 +76,8 @@ class ProcessList:
 
     def send_dynamic_resources_all_processes(self):
         payload = {}
+        if not self.processes:
+            payload = self.send_dynamic_resources(None)
         for process in self.processes:
             payload = self.send_dynamic_resources(process)
         self.network.send_dynamic_resources(payload)
