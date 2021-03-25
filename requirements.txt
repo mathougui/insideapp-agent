@@ -14,7 +14,7 @@ psutil==5.4.7
 pycodestyle==2.4.0
 PyInstaller==3.4
 pylint==2.1.1
-PyYAML==3.13
+PyYAML==5.4
 requests==2.19.1
 rope==0.11.0
 six==1.11.0
